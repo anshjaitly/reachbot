@@ -10,6 +10,7 @@ import logging
 import os
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class VoiceCommandListener:
             else:
                 self.client = OpenAI(api_key=api_key)
 
-    def listen(self) -> str | None:
+    def listen(self) -> Optional[str]:
         """Record audio, transcribe, return command if wake word present.
 
         Returns:
@@ -88,7 +89,7 @@ class VoiceCommandListener:
         finally:
             tmp_path.unlink(missing_ok=True)
 
-    def _stub_listen(self) -> str | None:
+    def _stub_listen(self) -> Optional[str]:
         """Stub mode: prompt the user via console for a typed command.
 
         Used during development without microphone or API key.

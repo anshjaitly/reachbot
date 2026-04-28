@@ -16,6 +16,14 @@ ultralytics>=8.2.0  # YOLOv8
 adafruit-circuitpython-pca9685>=3.4.0
 adafruit-circuitpython-servokit>=1.3.0
 
-# Optional — web interface
+# Web dashboard
 fastapi>=0.110.0
 uvicorn>=0.27.0
+pydantic>=2.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-mock>=3.11.0
+
+# Hardware (Raspberry Pi only — install on Pi, skip on dev machines)
+# RPi.GPIO>=0.7.1

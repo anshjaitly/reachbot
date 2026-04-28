@@ -7,6 +7,7 @@ position of the closest match for the requested target class.
 
 import logging
 from dataclasses import dataclass
+from typing import Optional, Tuple
 
 from config import (
     CAMERA_INDEX, CAMERA_WIDTH, CAMERA_HEIGHT,
@@ -61,7 +62,7 @@ class ObjectDetector:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)
 
-    def find_object(self, target_alias: str) -> ObjectPosition | None:
+    def find_object(self, target_alias: str) -> Optional["ObjectPosition"]:
         """Find the highest-confidence instance of `target_alias` in view."""
         target_class = OBJECT_CLASSES.get(target_alias.lower())
         if target_class is None:
@@ -105,7 +106,7 @@ class ObjectDetector:
 
         return best
 
-    def _pixel_to_arm_mm(self, px: float, py: float) -> tuple[float, float, float]:
+    def _pixel_to_arm_mm(self, px: float, py: float) -> Tuple[float, float, float]:
         """Convert pixel coordinates to arm-frame (mm).
 
         Assumes a downward-facing camera over a flat reachable workspace.
