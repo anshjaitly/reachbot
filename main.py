@@ -122,7 +122,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
             # 5. Grasp
             arm.move_to(position)
             safety.ping()
-            arm.close_gripper()
+            arm.close_gripper(object_width_mm=position.estimated_width_mm)
             time.sleep(0.5)
 
             # 6. Return to user

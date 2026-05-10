@@ -39,8 +39,11 @@ def arm():
 
 class TestHome:
     def test_home_calls_set_angle_for_all_channels(self, arm):
+        # Put arm in a non-home state so smooth motion actually fires
+        arm._current = {ch: 0.0 for ch in HOME_POSITION}
+        arm._current[SERVO_GRIPPER] = 45.0  # gripper half-closed
+
         set_angle_calls = []
-        original = arm.set_angle
         arm.set_angle = lambda ch, ang: set_angle_calls.append((ch, ang))
         arm.home()
         called_channels = {ch for ch, _ in set_angle_calls}
