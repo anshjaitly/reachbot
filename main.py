@@ -28,6 +28,7 @@ from object_detection import ObjectDetector
 from arm_control import ArmController
 from safety import SafetyMonitor
 from session_logger import SessionLogger
+from tts import Speaker
 from config import OBJECT_CLASSES, WAKE_WORD
 
 
@@ -51,6 +52,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
     session = SessionLogger()
     voice = VoiceCommandListener(wake_word=WAKE_WORD)
     detector = ObjectDetector(model="yolov8n.pt", confidence=0.5)
+    speaker = Speaker()
 
     safety.start()
     arm.home()
@@ -59,6 +61,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
     if web:
         _start_web_server(arm, session, safety)
 
+    speaker.ready()
     log.info("Ready. Say '%s, pick up my [object]' to begin.", WAKE_WORD)
 
     try:
@@ -80,12 +83,15 @@ def main(simulate: bool = False, web: bool = False) -> None:
             target = parse_target_object(command)
             if target is None:
                 log.warning("Could not parse target from: %r", command)
+                speaker.no_command()
                 continue
 
             if target not in OBJECT_CLASSES:
                 log.warning("Object %r not in supported classes", target)
+                speaker.no_command()
                 continue
 
+            speaker.confirm(target)
             attempt = session.start_attempt(command, target)
             t_start = time.time()
 
@@ -95,6 +101,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
 
             if position is None:
                 log.warning("Object %r not found in view", target)
+                speaker.not_found(target)
                 session.log_detection(attempt, detected=False)
                 session.finish_attempt(
                     attempt, success=False,
@@ -104,6 +111,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
                 continue
 
             log.info("Found: %s", position)
+            speaker.found()
             session.log_detection(
                 attempt, detected=True,
                 confidence=position.confidence,
@@ -112,6 +120,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
 
             # 4. Safety check before moving
             if not safety.check_position(position.x, position.y, position.z):
+                speaker.out_of_reach()
                 session.finish_attempt(
                     attempt, success=False,
                     failure_reason="out_of_reach",
@@ -122,6 +131,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
             # 5. Grasp
             arm.move_to(position)
             safety.ping()
+            speaker.grabbing()
             arm.close_gripper(object_width_mm=position.estimated_width_mm)
             time.sleep(0.5)
 
@@ -131,6 +141,7 @@ def main(simulate: bool = False, web: bool = False) -> None:
             arm.home()
             safety.ping()
 
+            speaker.done()
             session.finish_attempt(
                 attempt, success=True,
                 duration_s=time.time() - t_start,
