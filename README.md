@@ -4,7 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Status: Phase 1](https://img.shields.io/badge/status-Phase%201%20in%20progress-orange.svg)]()
+[![CI](https://github.com/anshjaitly/reachbot/actions/workflows/ci.yml/badge.svg)](https://github.com/anshjaitly/reachbot/actions/workflows/ci.yml)
+[![Status](https://img.shields.io/badge/status-ORCA%20Hand%20assembled-green.svg)]()
 
 **Project website:** [reachbot-arm.netlify.app](https://reachbot-arm.netlify.app/)
 
@@ -29,9 +30,10 @@ According to the CDC, more than 14 million adults over 65 fall each year, and re
 
 | Phase | Component | Status |
 |-------|-----------|--------|
-| Phase 1 | Gripper / End-effector | 🟡 In progress (CAD + assembly) |
-| Phase 2 | 4-axis arm | ⚪ Designed, not yet built |
-| Phase 3 | AI / voice / vision | ⚪ Software stubs complete |
+| Phase 1 | ORCA Hand v1 (ETH Zurich) | 🟢 Printed · tendon assembly in progress |
+| Phase 1 | Software stack (7 modules) | 🟢 Fully implemented — simulation + hardware |
+| Phase 2 | 4-axis arm | 🟡 Designed, hardware ordered |
+| Phase 3 | AI / voice / vision | 🟢 Code complete — pending hardware integration |
 
 ## Hardware
 
@@ -71,15 +73,29 @@ According to the CDC, more than 14 million adults over 65 fall each year, and re
 
 ```
 reachbot/
-├── main.py                 # Entry point — orchestrator loop
+├── main.py                   # Entry point — orchestrator loop
+├── gripper_test.py           # Standalone ORCA Hand test (no full stack needed)
+├── setup.sh                  # Raspberry Pi one-shot setup script
 ├── src/
-│   ├── voice_command.py    # Whisper API wrapper + intent parser
-│   ├── object_detection.py # OpenCV + YOLOv8 detector
-│   ├── arm_control.py      # Servo control + inverse kinematics
-│   └── config.py           # Hardware pinouts and constants
-├── requirements.txt        # Python dependencies
-├── LICENSE                 # MIT License
-├── .gitignore
+│   ├── voice_command.py      # Whisper API + VAD + local fallback
+│   ├── object_detection.py   # YOLOv8n detector + calibrated coordinate mapping
+│   ├── arm_control.py        # Servo IK, smooth motion, wrist auto-level
+│   ├── safety.py             # Watchdog, e-stop, reach limits
+│   ├── session_logger.py     # JSONL grasp attempt logging
+│   ├── calibration.py        # Pixel→mm affine calibration wizard
+│   ├── web_interface.py      # FastAPI dashboard + MJPEG stream
+│   └── config.py             # Hardware pinouts and constants
+├── tests/
+│   ├── conftest.py           # Shared fixtures (fast_sleep)
+│   ├── test_arm_control.py
+│   ├── test_calibration.py
+│   ├── test_object_detection.py
+│   ├── test_safety.py
+│   ├── test_session_logger.py
+│   └── test_voice_command.py
+├── .github/workflows/ci.yml  # GitHub Actions — tests on every push
+├── requirements.txt
+├── LICENSE
 └── README.md
 ```
 
@@ -87,7 +103,7 @@ reachbot/
 
 ```bash
 # Clone and install
-git clone https://github.com/[username]/reachbot.git
+git clone https://github.com/anshjaitly/reachbot.git
 cd reachbot
 pip install -r requirements.txt
 
