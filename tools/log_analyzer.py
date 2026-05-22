@@ -160,8 +160,8 @@ def print_report(stats: Dict[str, Any]) -> None:
     # Per-object table
     print(f"\n{'OBJECT BREAKDOWN':^{W}}")
     print(bar)
-    print(f"  {'Object':<16} {'Attempts':>8} {'Success':>8} {'Rate':>7} {'Avg(s)':>7}")
-    print(f"  {'─'*16} {'─'*8} {'─'*8} {'─'*7} {'─'*7}")
+    print(f"  {'Object':<16} {'Attempts':>8} {'Success':>8} {'Rate':>7} {'Avg(s)':>7}  {'':8}")
+    print(f"  {'─'*16} {'─'*8} {'─'*8} {'─'*7} {'─'*7}  {'─'*8}")
     for obj, s in sorted(stats["per_object"].items(),
                           key=lambda x: -x[1]["total"]):
         rate = s["success"] / s["total"] if s["total"] else 0
@@ -169,7 +169,7 @@ def print_report(stats: Dict[str, Any]) -> None:
                  if s["durations"] else 0)
         bar_str = "█" * int(rate * 8) + "░" * (8 - int(rate * 8))
         print(f"  {obj:<16} {s['total']:>8} {s['success']:>8} "
-              f"{rate*100:>6.1f}% {avg_d:>7.1f}")
+              f"{rate*100:>6.1f}% {avg_d:>7.1f}  {bar_str}")
 
     # Failure modes
     if stats["failure_modes"]:
