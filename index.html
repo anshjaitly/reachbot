@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ReachBot — Ansh Jaitly</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060810;--bg2:#0a0e1a;--panel:#0f1520;--panel2:#141b2d;
+  --border:#1a2235;--border2:#2a3850;
+  --t:#e2e8f0;--t2:#8899bb;--t3:#3a4a65;
+  --a:#ff6b2b;--a2:#ffd166;--g:#06d6a0;--b:#4488ff;--p:#9966ff;
+  --mono:'IBM Plex Mono',monospace;--body:'DM Sans',sans-serif;--disp:'Bebas Neue',sans-serif;
+}
+[data-theme=light]{
+  --bg:#f2f4fa;--bg2:#e8ecf4;--panel:#fff;--panel2:#f5f7ff;
+  --border:#d0d8f0;--border2:#b0bcd8;
+  --t:#111828;--t2:#4a5880;--t3:#9aa4c0;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--t);font-family:var(--body);overflow-x:hidden;transition:background .35s,color .35s}
+
+/* ── FIXED BG ── */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{position:absolute;inset:0;background:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:52px 52px;opacity:.3}
+.orb-px{position:absolute;inset:0;will-change:transform}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orb 20s ease-in-out infinite alternate}
+.orb1{width:600px;height:600px;top:-15%;left:-10%;background:radial-gradient(circle,rgba(255,107,43,.15),transparent 60%);animation-duration:18s}
+.orb2{width:500px;height:500px;bottom:-15%;right:-10%;background:radial-gradient(circle,rgba(68,136,255,.12),transparent 60%);animation-duration:24s;animation-delay:-8s}
+.orb3{width:350px;height:350px;top:45%;left:45%;background:radial-gradient(circle,rgba(6,214,160,.09),transparent 60%);animation-duration:15s;animation-delay:-4s}
+@keyframes orb{0%{transform:translate(0,0) scale(1)}100%{transform:translate(60px,50px) scale(1.2)}}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:0 36px;height:52px}
+.logo{font-family:var(--disp);font-size:22px;letter-spacing:4px;color:var(--t);cursor:pointer}
+.logo span{color:var(--a)}
+.nav-r{display:flex;align-items:center;gap:14px}
+.status{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--g);letter-spacing:1px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--panel);color:var(--t2);cursor:pointer;font-size:15px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.tbtn:hover{border-color:var(--a);color:var(--a)}
+
+/* ── TAB STRIP ── */
+.tab-strip{display:flex;overflow-x:auto;padding:0 36px;border-top:1px solid var(--border);scrollbar-width:none}
+.tab-strip::-webkit-scrollbar{display:none}
+.tab{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px 18px;border:none;background:none;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;flex-shrink:0}
+.tab:hover{color:var(--t2)}
+.tab.on{color:var(--a);border-bottom-color:var(--a)}
+
+/* ── PAGE SHELL ── */
+#shell{position:relative;z-index:1;padding-top:91px}
+.page{display:block;padding:80px 0 80px}
+.page:not(:last-child){border-bottom:1px solid var(--border)}
+
+/* ── PARALLAX BG ── */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{position:absolute;inset:0;background:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:52px 52px;opacity:.3;will-change:transform}
+
+/* ── SECTION ANCHORS ── */
+.section-anchor{display:block;height:0;pointer-events:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 52px}
+
+/* ── TYPOGRAPHY ── */
+.eyebrow{font-family:var(--mono);font-size:10px;color:var(--a);letter-spacing:4px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--a)}
+.h1{font-family:var(--disp);font-size:clamp(72px,11vw,150px);line-height:.88;letter-spacing:3px;color:var(--t)}
+.h1 .out{-webkit-text-stroke:1.5px var(--a);color:transparent}
+.h1 .ac{color:var(--a)}
+.h2{font-family:var(--disp);font-size:clamp(38px,5vw,68px);line-height:.92;letter-spacing:2px;color:var(--t);margin-bottom:32px}
+.h3{font-family:var(--disp);font-size:26px;letter-spacing:2px;color:var(--t);margin-bottom:14px}
+.dim{color:var(--t3)}
+.lg{font-size:17px;color:var(--t2);line-height:1.85;font-weight:300;margin-bottom:18px}
+.md{font-size:15px;color:var(--t2);line-height:1.8;margin-bottom:14px}
+.sm{font-size:13px;color:var(--t3);line-height:1.7}
+
+/* ── CARDS ── */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px}
+.card:hover{border-color:var(--border2)}
+.cp{padding:26px 30px}
+.cs{padding:18px 22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;font-family:var(--mono);font-size:9px;padding:3px 9px;border-radius:3px;letter-spacing:1px;margin:2px}
+.to{color:var(--a);border:1px solid rgba(255,107,43,.3);background:rgba(255,107,43,.07)}
+.tg{color:var(--g);border:1px solid rgba(6,214,160,.3);background:rgba(6,214,160,.07)}
+.tb{color:var(--b);border:1px solid rgba(68,136,255,.3);background:rgba(68,136,255,.07)}
+.ty{color:var(--a2);border:1px solid rgba(255,209,102,.3);background:rgba(255,209,102,.07)}
+.tp{color:var(--p);border:1px solid rgba(153,102,255,.3);background:rgba(153,102,255,.07)}
+
+/* ── REVEAL ── */
+.rv,.rvl,.rvr{opacity:0;transition:opacity .7s ease,transform .7s ease}
+.rv{transform:translateY(24px)}.rvl{transform:translateX(-28px)}.rvr{transform:translateX(28px)}
+.rv.in,.rvl.in,.rvr.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ── DIVIDER ── */
+hr{border:none;border-top:1px solid var(--border);margin:48px 0}
+
+/* ── HERO ── */
+.hero-wrap{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:center;min-height:calc(100vh - 91px)}
+.hero-sub{font-size:17px;color:var(--t2);line-height:1.75;font-weight:300;max-width:520px;margin:20px 0 36px}
+.hero-sub em{color:var(--a2);font-style:normal;font-weight:600}
+.hero-btns{display:flex;gap:12px;margin-bottom:48px}
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:11px 26px;border-radius:6px;cursor:pointer;transition:all .2s}
+.btn-a{border:none;background:var(--a);color:#fff}.btn-a:hover{background:#ff8855;transform:translateY(-1px)}
+.btn-b{border:1px solid var(--border2);background:transparent;color:var(--t2)}.btn-b:hover{border-color:var(--a);color:var(--a)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.stat{background:var(--panel);padding:18px 20px}
+.stat-n{font-family:var(--disp);font-size:42px;color:var(--t);line-height:1}
+.stat-n span{color:var(--a)}
+.stat-l{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:2px;margin-top:3px}
+/* hero card */
+.hcard{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.hcard-top{padding:18px 22px;border-bottom:1px solid var(--border)}
+.hcard-id{font-family:var(--mono);font-size:9px;color:var(--a);letter-spacing:3px;margin-bottom:6px}
+.hcard-name{font-family:var(--disp);font-size:24px;letter-spacing:2px;color:var(--t)}
+.hcard-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.hcard-mid{background:var(--bg2);padding:14px}
+.hcard-rows{padding:14px 22px}
+.hrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--t2)}
+.hrow:last-child{border:none}
+.hrow span{font-family:var(--mono);font-size:9px;color:var(--a)}
+
+/* ── PROBLEM ── */
+.pstats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px}
+.pstat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden}
+.pstat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--a);opacity:.5}
+.pstat-n{font-family:var(--disp);font-size:50px;color:var(--a);line-height:1;margin-bottom:6px}
+.pstat-l{font-size:13px;color:var(--t2);line-height:1.4}
+.pstat-s{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:6px}
+.ibar{margin-bottom:14px}
+.ibar-top{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px}
+.ibar-top span{font-family:var(--mono);font-size:10px;color:var(--a)}
+.ibar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.ibar-fill{height:100%;border-radius:3px;background:linear-gradient(to right,var(--a),var(--a2));width:0;transition:width 1.2s ease}
+
+/* ── STORY ── */
+.quote{padding:26px 32px;border-left:4px solid var(--a);background:rgba(255,107,43,.05);border-radius:0 10px 10px 0;margin:24px 0}
+.quote p{font-size:18px;color:var(--t);line-height:1.65;font-style:italic;font-weight:300}
+.quote cite{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;margin-top:10px;display:block}
+.tl{display:flex;flex-direction:column}
+.tl-row{display:flex;gap:16px}
+.tl-l{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--a);background:var(--bg);margin-top:4px;flex-shrink:0}
+.tl-dot.done{background:var(--a)}
+.tl-dot.now{background:var(--a);box-shadow:0 0 10px var(--a)}
+.tl-line{width:2px;background:var(--border);flex:1;min-height:16px;margin:3px 0}
+.tl-b{padding:0 0 24px;flex:1}
+.tl-when{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;margin-bottom:4px}
+.tl-title{font-size:14px;font-weight:600;color:var(--t);margin-bottom:4px}
+.tl-desc{font-size:12px;color:var(--t3);line-height:1.6}
+
+/* ── GRIPPER ── */
+.views{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:32px}
+.vp{background:var(--bg2);padding:24px 12px 18px;display:flex;flex-direction:column;align-items:center}
+.vp-lbl{font-family:var(--mono);font-size:9px;padding:4px 14px;border-radius:100px;display:inline-block;margin-bottom:14px;letter-spacing:2px}
+.vp-ext{color:var(--t3);border:1px solid var(--border2)}
+.vp-int{color:var(--a);border:1px solid rgba(255,107,43,.35);background:rgba(255,107,43,.07)}
+.vp-cap{font-family:var(--mono);font-size:9px;color:var(--t3);text-align:center;margin-top:10px;line-height:1.8}
+.ctrls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.ctrl{font-family:var(--mono);font-size:9px;padding:7px 16px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:1px}
+.ctrl.on,.ctrl:hover{border-color:var(--a);color:var(--a);background:rgba(255,107,43,.08)}
+.leg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.li{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--t3)}
+.ld{width:7px;height:7px;border-radius:2px}
+.spec-card{border:1px solid var(--border);border-left:4px solid;border-radius:10px;padding:20px 24px;background:var(--panel);margin-bottom:12px}
+.spec-num{font-family:var(--mono);font-size:9px;letter-spacing:3px;margin-bottom:5px}
+.spec-name{font-size:15px;font-weight:700;color:var(--t);margin-bottom:3px}
+.spec-motor{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:8px}
+.spec-body{font-size:13px;color:var(--t3);line-height:1.6}
+.spec-extra{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--bg2);padding:7px 10px;border-radius:4px;margin-top:8px}
+.dt{background:var(--panel2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:14px}
+.dr{display:grid;grid-template-columns:1fr 1fr;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.dr:last-child{border-bottom:none}
+.dr.dh{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;background:var(--panel)}
+.dk{color:var(--t2)}.dv{font-family:var(--mono);color:var(--a2);text-align:right}
+
+/* ── ARM ── */
+.ax-card{background:var(--panel);border:1px solid var(--border);border-left:4px solid;border-radius:10px;padding:20px 24px;margin-bottom:12px}
+.ax1{border-left-color:var(--b)}.ax2{border-left-color:var(--a)}.ax3{border-left-color:var(--a2)}.ax4{border-left-color:var(--g)}
+.ax-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;margin-bottom:6px}
+.ax1 .ax-tag{color:var(--b)}.ax2 .ax-tag{color:var(--a)}.ax3 .ax-tag{color:var(--a2)}.ax4 .ax-tag{color:var(--g)}
+.ax-name{font-size:15px;font-weight:700;color:var(--t);margin-bottom:3px}
+.ax-motor{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:8px}
+.ax-desc{font-size:13px;color:var(--t3);line-height:1.6}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.mc-part{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;margin-bottom:4px}
+.mc-motor{font-size:13px;font-weight:700;color:var(--t);margin-bottom:3px}
+.mc-why{font-size:12px;color:var(--t3)}
+.mat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mat{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.mat-ph{font-family:var(--mono);font-size:9px;color:var(--a);letter-spacing:2px;margin-bottom:6px}
+.mat-t{font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px}
+.mat-d{font-size:12px;color:var(--t3);line-height:1.5}
+
+/* ── RESEARCH ── */
+.note{background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.25);border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--a2);letter-spacing:1px;margin-bottom:28px}
+.data-tbl{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.dtr{display:grid;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.dtr:last-child{border-bottom:none}
+.dth{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;background:var(--panel2)}
+.d4{grid-template-columns:2fr 1fr 1.2fr 1fr}
+.dn{color:var(--t2)}.dv2{font-family:var(--mono);font-size:10px;color:var(--a2)}.davg{font-family:var(--mono);font-size:10px;color:var(--g);font-weight:700}
+.src{display:flex;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:7px}
+.src-n{font-family:var(--mono);font-size:9px;color:var(--a);background:rgba(255,107,43,.1);border:1px solid rgba(255,107,43,.25);border-radius:3px;padding:2px 7px;flex-shrink:0;height:fit-content;margin-top:1px}
+.src-t{font-size:12px;color:var(--t3);line-height:1.5}
+.calc{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px}
+.calc-l{font-family:var(--mono);font-size:9px;color:var(--a);letter-spacing:3px;margin-bottom:7px}
+.calc-f{font-family:var(--mono);font-size:11px;color:var(--a2);background:rgba(255,209,102,.05);padding:9px 12px;border-radius:4px;border-left:2px solid var(--a2);margin-bottom:7px;line-height:1.7;white-space:pre-line}
+.calc-r{font-size:13px;color:var(--g);font-weight:700;margin-bottom:4px}
+.calc-n{font-size:12px;color:var(--t3);line-height:1.6}
+.val-box{background:rgba(6,214,160,.05);border:1px solid rgba(6,214,160,.2);border-radius:8px;padding:16px 20px;margin-top:14px}
+.vbt{font-family:var(--mono);font-size:9px;color:var(--g);letter-spacing:3px;margin-bottom:12px}
+.vbr{display:flex;gap:10px;margin-bottom:8px;font-size:12px;align-items:baseline}
+.vbp{color:var(--t3);min-width:120px}.vbv{font-family:var(--mono);color:var(--g);min-width:90px}.vbn{color:var(--t3);font-size:11px}
+
+/* ── ROADMAP ── */
+.rm{display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start}
+.pm-nav{display:flex;flex-direction:column;gap:3px;position:sticky;top:24px}
+.pm-item{padding:12px 16px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .2s}
+.pm-item:hover,.pm-item.on{background:var(--panel);border-color:var(--border2)}
+.pm-n{font-family:var(--disp);font-size:38px;color:var(--border2);line-height:1}
+.pm-n.on{color:var(--a)}
+.pm-t{font-size:13px;font-weight:600;color:var(--t2)}
+.pm-w{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px}
+.pd{display:none}.pd.on{display:block;animation:pageIn .25s ease}
+.ps{font-family:var(--mono);font-size:9px;letter-spacing:3px;margin-bottom:10px}
+.ps-a{color:var(--a)}.ps-u{color:var(--t3)}
+.pt{font-family:var(--disp);font-size:34px;letter-spacing:2px;color:var(--t);margin-bottom:6px}
+.pw{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:14px}
+.pb{font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:20px}
+.task{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;margin-bottom:5px}
+.tck{width:17px;height:17px;border-radius:4px;border:1px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.tck.a{border-color:var(--a)}
+.tck-t{font-size:13px;color:var(--t2);line-height:1.4}
+
+/* ── OUTREACH ── */
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.fc{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.fc:hover{transform:translateY(-2px);border-color:var(--border2)}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.fc.pri::before{background:linear-gradient(to right,var(--a),var(--a2))}
+.fc.sec::before{background:linear-gradient(to right,var(--b),var(--p))}
+.fc-type{font-family:var(--mono);font-size:9px;letter-spacing:2px;margin-bottom:8px}
+.fc-type.cm{color:var(--a)}.fc-type.lv{color:var(--b)}
+.fc-name{font-size:15px;font-weight:700;color:var(--t);margin-bottom:4px}
+.fc-ph{font-family:var(--mono);font-size:12px;color:var(--g);margin-bottom:9px}
+.fc-ct{font-size:12px;color:var(--t3);margin-bottom:3px}
+.fc-ct strong{color:var(--a2)}
+.fc-hr{font-family:var(--mono);font-size:10px;color:var(--t3);padding-top:9px;margin-top:9px;border-top:1px solid var(--border)}
+.fc-badge{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-family:var(--mono);font-size:9px;padding:3px 10px;border-radius:100px;letter-spacing:1px}
+.fc-call{color:var(--g);border:1px solid rgba(6,214,160,.25);background:rgba(6,214,160,.07)}
+.fc-pend{color:var(--a2);border:1px solid rgba(255,209,102,.25);background:rgba(255,209,102,.07)}
+.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.qi{display:flex;gap:9px;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px}
+.qn{font-family:var(--mono);font-size:9px;color:var(--a);flex-shrink:0}
+.qt{font-size:12px;color:var(--t3);line-height:1.5}
+
+/* ── PARTS ── */
+.part{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:13px 20px;margin-bottom:7px;transition:border-color .2s}
+.part:hover{border-color:var(--border2)}
+.pi{font-size:20px;width:34px;text-align:center;flex-shrink:0}
+.pinfo{flex:1}
+.pname{font-size:14px;font-weight:600;color:var(--t);margin-bottom:2px}
+.pspec{font-family:var(--mono);font-size:10px;color:var(--t3)}
+.pprice{font-family:var(--mono);font-size:14px;color:var(--g);flex-shrink:0;margin-right:10px}
+.amz{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:#ff9900;text-decoration:none;border:1px solid rgba(255,153,0,.25);border-radius:4px;padding:5px 12px;background:rgba(255,153,0,.06);white-space:nowrap;transition:all .2s;letter-spacing:1px;flex-shrink:0}
+.amz:hover{background:rgba(255,153,0,.14);border-color:rgba(255,153,0,.5)}
+.budget{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:24px}
+.br{display:flex;justify-content:space-between;align-items:center;padding:12px 22px;border-bottom:1px solid var(--border);font-size:13px}
+.br:last-child{border-bottom:none;background:rgba(255,107,43,.04)}
+.bn{color:var(--t3)}.bnote{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:1px}
+.bv{font-family:var(--mono);color:var(--t3)}
+.bv.free{color:var(--g)}.bv.total{color:var(--a);font-size:17px;font-weight:700}
+
+/* ── ASSEMBLY ── */
+.asm-row{display:flex;gap:22px}
+.asm-l{display:flex;flex-direction:column;align-items:center;width:46px;flex-shrink:0}
+.asm-c{width:46px;height:46px;border-radius:50%;border:2px solid var(--a);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--a);background:var(--bg);flex-shrink:0}
+.asm-vl{width:2px;background:var(--border);flex:1;min-height:18px;margin:3px 0}
+.asm-b{padding:3px 0 32px;flex:1}
+.asm-t{font-size:16px;font-weight:700;color:var(--t);margin-bottom:6px}
+.asm-d{font-size:14px;color:var(--t3);line-height:1.75;margin-bottom:5px}
+.asm-note{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:1px}
+.asm-warn{font-family:var(--mono);font-size:10px;color:var(--a2);margin-top:4px}
+
+/* ── FAIL ── */
+.fail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.fail{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:17px 20px}
+.fl{font-family:var(--mono);font-size:9px;color:#e63946;letter-spacing:2px;margin-bottom:6px}
+.ft{font-size:13px;font-weight:700;color:var(--t);margin-bottom:5px}
+.ff{font-size:12px;color:var(--t3);line-height:1.5}
+.ff span{color:var(--g)}
+
+/* ── COMPETE ── */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.comp{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;transition:border-color .2s,transform .2s}
+.comp:hover{transform:translateY(-2px);border-color:var(--border2)}
+.comp-tier{font-family:var(--mono);font-size:9px;letter-spacing:3px;margin-bottom:10px}
+.tg1{color:var(--a2)}.tg2{color:var(--t3)}
+.comp-name{font-family:var(--disp);font-size:26px;letter-spacing:1px;color:var(--t);margin-bottom:8px}
+.comp-desc{font-size:13px;color:var(--t3);line-height:1.6;margin-bottom:9px}
+.comp-dl{font-family:var(--mono);font-size:10px;color:var(--a);margin-bottom:5px}
+.comp-pr{font-family:var(--mono);font-size:10px;color:var(--g);margin-bottom:12px}
+.comp-why{font-size:12px;color:var(--t3);padding-top:11px;border-top:1px solid var(--border);line-height:1.6}
+.ct{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:26px;margin-top:24px}
+.ct-t{font-family:var(--disp);font-size:22px;letter-spacing:2px;color:var(--t);margin-bottom:18px}
+.ctr{display:flex;gap:16px;margin-bottom:14px}
+.ctw{font-family:var(--mono);font-size:10px;color:var(--a);width:120px;flex-shrink:0;padding-top:1px}
+.ctx{font-size:13px;color:var(--t2);line-height:1.6}
+
+/* ── TECH ── */
+.stack{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sk{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:17px}
+.sk-ph{font-family:var(--mono);font-size:9px;color:var(--a);letter-spacing:2px;margin-bottom:11px}
+.si{font-size:12px;color:var(--t3);display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.si::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--a);flex-shrink:0}
+.si.done{color:var(--g)}.si.done::before{background:var(--g)}
+.si.up::before{background:var(--t3)}
+
+/* ── FOOTER ── */
+.footer{border-top:1px solid var(--border);padding:48px 52px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;margin-top:40px}
+.fb{font-family:var(--disp);font-size:44px;letter-spacing:4px;color:var(--border2)}
+.fi{font-family:var(--mono);font-size:10px;color:var(--t3);line-height:2;letter-spacing:1px}
+.fi .fa{color:var(--a)}
+.fl-links{display:flex;flex-direction:column;gap:7px}
+.fl-link{font-family:var(--mono);font-size:10px;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;letter-spacing:1px;transition:color .2s}
+.fl-link:hover{color:var(--a)}
+
+@media(max-width:860px){
+  .hero-wrap,.g2,.rm,.comp-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stack{grid-template-columns:repeat(2,1fr)}
+  .footer{grid-template-columns:1fr;padding:36px 24px}
+  .wrap{padding:0 20px}
+  .views{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- BG -->
+<div id="bg">
+  <div class="bg-grid"></div>
+  <div class="orb-px" id="op1"><div class="orb orb1"></div></div>
+  <div class="orb-px" id="op2"><div class="orb orb2"></div></div>
+  <div class="orb-px" id="op3"><div class="orb orb3"></div></div>
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <div class="nav-top">
+    <div class="logo" onclick="go('hero')">REACH<span>BOT</span></div>
+    <div class="nav-r">
+      <div class="status"><div class="dot"></div>ORCA HAND ACTIVE</div>
+      <a href="https://github.com/anshjaitly/reachbot" target="_blank" style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--t2);border:1px solid var(--border2);border-radius:4px;padding:4px 10px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--t2)'">⌥ GITHUB</a>
+      <button class="tbtn" id="tb">☀️</button>
+    </div>
+  </div>
+  <div class="tab-strip" id="tabs">
+    <button class="tab on" data-tab="hero">HOME</button>
+    <button class="tab" data-tab="problem">PROBLEM</button>
+    <button class="tab" data-tab="story">STORY</button>
+    <button class="tab" data-tab="gripper">DESIGN LOG</button>
+    <button class="tab" data-tab="arm">FULL ARM</button>
+    <button class="tab" data-tab="research">RESEARCH</button>
+    <button class="tab" data-tab="roadmap">ROADMAP</button>
+    <button class="tab" data-tab="outreach">OUTREACH</button>
+    <button class="tab" data-tab="parts">PARTS</button>
+    <button class="tab" data-tab="assembly">ASSEMBLY</button>
+    <button class="tab" data-tab="compete">COMPETE</button>
+    <button class="tab" data-tab="tech">TECH STACK</button>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div id="shell">
+
+<!-- ═══ HOME ═══════════════════════════════════════════════════════════ -->
+<div class="page on" id="p-hero">
+<div class="wrap">
+  <div class="hero-wrap">
+    <div>
+      <div class="eyebrow rv">Robotics Engineering Project — Class of 2028</div>
+      <div class="h1 rv d1">REACH<span class="ac">BOT</span><br><span class="out">AI ARM</span></div>
+      <p class="hero-sub rv d2">An AI-assisted robotic arm restoring independence to <em>seniors with limited mobility</em> — voice-controlled, wheelchair-mounted, built from real user research.</p>
+      <div class="hero-btns rv d3">
+        <button class="btn btn-a" onclick="go('gripper')">DESIGN LOG →</button>
+        <button class="btn btn-b" onclick="window.open('https://github.com/anshjaitly/reachbot','_blank')">⌥ GITHUB</button>
+      </div>
+      <div class="stats rv d4">
+        <div class="stat"><div class="stat-n" id="cv">0<span>+</span></div><div class="stat-l">YEARS VEX ROBOTICS</div></div>
+        <div class="stat"><div class="stat-n">4</div><div class="stat-l">BUILD PHASES</div></div>
+        <div class="stat"><div class="stat-n"><span>$</span><span id="cb">0</span></div><div class="stat-l">FULL BUILD BUDGET</div></div>
+        <div class="stat"><div class="stat-n">5</div><div class="stat-l">SENIOR FACILITIES</div></div>
+      </div>
+    </div>
+    <div class="rvr d2">
+      <div class="hcard">
+        <div class="hcard-top">
+          <div class="hcard-id">// PROJECT REACHBOT — v1.5 · ORCA HAND</div>
+          <div class="hcard-name">Ansh Jaitly</div>
+          <div class="hcard-sub">Dougherty Valley HS · San Ramon, CA · Class of 2028</div>
+        </div>
+        <div class="hcard-mid">
+          <svg width="100%" viewBox="0 0 220 180" style="display:block">
+            <!-- Palm -->
+            <rect x="70" y="100" width="80" height="50" rx="6" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <!-- Thumb -->
+            <rect x="52" y="108" width="22" height="38" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <rect x="54" y="106" width="18" height="12" rx="4" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.2"/>
+            <line x1="63" y1="118" x2="63" y2="108" stroke="#ff6b2b" stroke-width="1" opacity=".7"/>
+            <!-- Finger 1 -->
+            <rect x="74" y="55" width="14" height="50" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <rect x="76" y="53" width="10" height="12" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.2"/>
+            <rect x="76" y="70" width="10" height="11" rx="2" fill="#1b2d42" stroke="#06d6a0" stroke-width="1" opacity=".7"/>
+            <line x1="81" y1="65" x2="81" y2="55" stroke="#ff6b2b" stroke-width="1" opacity=".7"/>
+            <!-- Finger 2 -->
+            <rect x="92" y="48" width="14" height="57" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <rect x="94" y="46" width="10" height="12" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.2"/>
+            <rect x="94" y="63" width="10" height="11" rx="2" fill="#1b2d42" stroke="#06d6a0" stroke-width="1" opacity=".7"/>
+            <line x1="99" y1="58" x2="99" y2="48" stroke="#ff6b2b" stroke-width="1" opacity=".7"/>
+            <!-- Finger 3 -->
+            <rect x="110" y="52" width="14" height="53" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <rect x="112" y="50" width="10" height="12" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.2"/>
+            <rect x="112" y="67" width="10" height="11" rx="2" fill="#1b2d42" stroke="#06d6a0" stroke-width="1" opacity=".7"/>
+            <line x1="117" y1="62" x2="117" y2="52" stroke="#ff6b2b" stroke-width="1" opacity=".7"/>
+            <!-- Finger 4 (pinky) -->
+            <rect x="128" y="62" width="12" height="43" rx="4" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+            <rect x="129" y="60" width="10" height="11" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.2"/>
+            <line x1="134" y1="71" x2="134" y2="62" stroke="#ff6b2b" stroke-width="1" opacity=".7"/>
+            <!-- MG996R servo at base -->
+            <rect x="84" y="148" width="52" height="24" rx="4" fill="#141414" stroke="#2a2a2a" stroke-width="1.5"/>
+            <text x="110" y="163" text-anchor="middle" fill="#ff6b2b" font-size="7" font-family="IBM Plex Mono" opacity=".7">MG996R</text>
+            <!-- Tendon lines -->
+            <line x1="81" y1="105" x2="105" y2="148" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+            <line x1="99" y1="105" x2="108" y2="148" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+            <line x1="117" y1="105" x2="114" y2="148" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+            <text x="110" y="175" text-anchor="middle" fill="#334" font-size="8" font-family="IBM Plex Mono">ORCA HAND v1 — 17 DOF</text>
+          </svg>
+        </div>
+        <div class="hcard-rows">
+          <div class="hrow"><span style="color:var(--t2);font-size:13px">VEX AI Worlds 2026</span><span>QUALIFIED</span></div>
+          <div class="hrow"><span style="color:var(--t2);font-size:13px">Honors Physics</span><span>CURRENT</span></div>
+          <div class="hrow"><span style="color:var(--t2);font-size:13px">AP Computer Science A</span><span>CURRENT</span></div>
+          <div class="hrow"><span style="color:var(--t2);font-size:13px">ORCA Hand v1</span><span>PRINTING ✓</span></div>
+          <div class="hrow"><span style="color:var(--t2);font-size:13px">github.com/anshjaitly/reachbot</span><span>LIVE</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ PROBLEM ══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-problem">
+<div class="wrap">
+  <div class="eyebrow rv">The Problem</div>
+  <div class="h2 rv d1">WHY THIS <span class="dim">MATTERS</span></div>
+  <div class="g2">
+    <div>
+      <p class="lg rv d2">Over 54 million Americans live with a disability limiting their daily activities. For seniors with limited mobility, losing the ability to independently pick up a dropped object — a phone, a remote, a glass of water — is a constant, humiliating struggle.</p>
+      <p class="md rv d3">Current solutions are either prohibitively expensive ($3,000–$15,000), too bulky, or require significant caregiver involvement. There is no accessible, voice-controlled option under $300.</p>
+      <div class="rv d4" style="margin-top:20px">
+        <div class="ibar"><div class="ibar-top"><span>Cannot reach the floor independently</span><span>87%</span></div><div class="ibar-track"><div class="ibar-fill" data-w="87"></div></div></div>
+        <div class="ibar"><div class="ibar-top"><span>Rely on caregiver for object retrieval</span><span>71%</span></div><div class="ibar-track"><div class="ibar-fill" data-w="71"></div></div></div>
+        <div class="ibar"><div class="ibar-top"><span>Would use assistive arm if under $300</span><span>94%</span></div><div class="ibar-track"><div class="ibar-fill" data-w="94"></div></div></div>
+        <div class="ibar"><div class="ibar-top"><span>Report reduced self-worth due to dependence</span><span>63%</span></div><div class="ibar-track"><div class="ibar-fill" data-w="63"></div></div></div>
+        <p class="sm" style="margin-top:8px">Placeholder survey data — will be updated with field research. n=12.</p>
+      </div>
+    </div>
+    <div class="pstats rvr d2">
+      <div class="pstat"><div class="pstat-n">54M+</div><div class="pstat-l">Americans with a mobility-limiting disability</div><div class="pstat-s">[CDC National Health Statistics, 2023]</div></div>
+      <div class="pstat"><div class="pstat-n">$3K+</div><div class="pstat-l">Average cost of existing assistive arm devices</div><div class="pstat-s">[Medical device market, 2024]</div></div>
+      <div class="pstat"><div class="pstat-n">94%</div><div class="pstat-l">Would use ReachBot if under $300</div><div class="pstat-s">[Placeholder — field research pending]</div></div>
+      <div class="pstat"><div class="pstat-n">$250</div><div class="pstat-l">ReachBot complete build cost — all phases</div><div class="pstat-s">[Internal BOM calculation]</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STORY ════════════════════════════════════════════════════════════ -->
+<div class="page" id="p-story">
+<div class="wrap">
+  <div class="eyebrow rv">Origin Story</div>
+  <div class="h2 rv d1">WHY I <span class="dim">BUILT THIS</span></div>
+  <div class="g2">
+    <div class="rvl d2">
+      <p class="lg">I've spent <strong>five years building robots to win competitions</strong> — VEX V5, States, Nationals, and this year qualifying for Worlds with VEX AI. I know how to build things that impress judges.</p>
+      <p class="md">But last year, something shifted. I started thinking about <em style="color:var(--a2);font-style:normal;font-weight:600">who robots are actually built for</em>. Not teams. Not trophies. People.</p>
+      <div class="quote">
+        <p>"I spent six years building robots to win competitions. Then I started thinking about seniors who struggle to pick up a fallen remote. That changed what I wanted to build — and why."</p>
+        <cite>— Ansh Jaitly, Dougherty Valley HS, 2026</cite>
+      </div>
+      <p class="md">Seniors with limited mobility face a constant struggle with basic tasks. <strong style="color:var(--t)">Every dropped object means asking for help.</strong> Current solutions cost thousands and require trained operators.</p>
+      <p class="md">ReachBot is my answer — a voice-controlled arm that mounts to a wheelchair and lets someone reach, grip, and retrieve objects independently. No caregiver. Under $300.</p>
+      <div class="tl" style="margin-top:28px">
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-b"><div class="tl-when">2019–2024</div><div class="tl-title">VEX Robotics — 5 years competing</div><div class="tl-desc">VEX V5, States, Nationals. Built foundational mechanical design and C++ control systems skills.</div></div></div>
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-b"><div class="tl-when">2025</div><div class="tl-title">VEX AI — Qualified for Worlds</div><div class="tl-desc">Transitioned to autonomous AI-based competition. Qualified for Worlds — highest VEX level.</div></div></div>
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot done"></div><div class="tl-line"></div></div><div class="tl-b"><div class="tl-when">Early 2026</div><div class="tl-title">ReachBot Phase 1 — 4 design iterations</div><div class="tl-desc">Dual-paddle → octopus tentacles → 6-tentacle array → ORCA Hand v1. Settled on ETH Zurich open-source 17-DOF tendon hand, modified for single MG996R. Fingers printed and assembled.</div></div></div>
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot now"></div><div class="tl-line"></div></div><div class="tl-b"><div class="tl-when">May 2026</div><div class="tl-title">Software stack — fully implemented</div><div class="tl-desc">7 Python modules live on GitHub: voice (Whisper), object detection (YOLOv8n), arm IK, safety watchdog, session logger, camera calibration, FastAPI dashboard.</div></div></div>
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-b"><div class="tl-when">Summer 2026</div><div class="tl-title">Phase 2 — Full arm hardware build</div><div class="tl-desc">Complete 4-axis mechanical system, aluminum tube, wheelchair mount.</div></div></div>
+        <div class="tl-row"><div class="tl-l"><div class="tl-dot"></div></div><div class="tl-b"><div class="tl-when">Fall 2026</div><div class="tl-title">Phase 3 + Competition submissions</div><div class="tl-desc">AI integration complete. Regeneron STS, Conrad, Congressional App Challenge.</div></div></div>
+      </div>
+    </div>
+    <div class="rvr d2">
+      <div class="card cp" style="margin-bottom:12px"><div style="font-size:28px;margin-bottom:10px">🏆</div><div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">5+ Years VEX Robotics</div><div class="sm">VEX V5 Excellence Award, States, Nationals. VEX AI Worlds qualifier 2026. Strong foundation in mechanical design and C++ control systems.</div><div style="margin-top:10px"><span class="tag to">COMPETITION ROBOTICS</span><span class="tag to">VEX AI WORLDS</span></div></div>
+      <div class="card cp" style="margin-bottom:12px"><div style="font-size:28px;margin-bottom:10px">🤖</div><div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">Robotics Engineering Goal</div><div class="sm">Pursuing Robotics Engineering degree. Exploring ASU (dedicated program + Barrett Honors), UCSD, and Caltech. ReachBot is the capstone project.</div><div style="margin-top:10px"><span class="tag tb">COLLEGE PREP</span></div></div>
+      <div class="card cp" style="margin-bottom:12px"><div style="font-size:28px;margin-bottom:10px">🔬</div><div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">CourAGE — Peer Advocacy</div><div class="sm">Member of CourAGE, a peer-led prevention program. Presented at UC Berkeley TTT Conference. Speaker 1 for County Board of Education presentation April 15.</div><div style="margin-top:10px"><span class="tag tg">LEADERSHIP</span></div></div>
+      <div class="card cp"><div style="font-size:28px;margin-bottom:10px">🎯</div><div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">Real User Validation First</div><div class="sm">Visiting 5 senior facilities to interview wheelchair users before building. Building what people actually need — verified through research, not assumptions.</div><div style="margin-top:10px"><span class="tag ty">USER RESEARCH</span><span class="tag ty">IN PROGRESS</span></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ GRIPPER ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-gripper">
+<div class="wrap">
+  <div class="eyebrow rv">Phase 1 — End Effector</div>
+  <div class="h2 rv d1">DESIGN <span class="dim">ITERATIONS</span></div>
+  <p class="md rv d2" style="max-width:640px;margin-bottom:40px">Four design iterations — each rejected for a specific engineering reason — led to the ORCA Hand v1. Every pivot is documented below with the exact failure mode that drove the change.</p>
+
+  <!-- ITERATION LOG -->
+  <style>
+  .iter{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:26px 30px;margin-bottom:12px;display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:start;transition:border-color .2s}
+  .iter:hover{border-color:var(--border2)}
+  .iter-n{font-family:var(--disp);font-size:56px;color:var(--border2);line-height:1}
+  .iter.done .iter-n{color:var(--a)}
+  .iter-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;padding:3px 10px;border-radius:100px;display:inline-block;margin-bottom:10px}
+  .badge-x{color:#e63946;border:1px solid rgba(230,57,70,.3);background:rgba(230,57,70,.07)}
+  .badge-ok{color:var(--g);border:1px solid rgba(6,214,160,.3);background:rgba(6,214,160,.07)}
+  .iter-title{font-size:17px;font-weight:700;color:var(--t);margin-bottom:6px}
+  .iter-why{font-size:13px;color:var(--t3);line-height:1.7;margin-bottom:8px}
+  .iter-verdict{font-family:var(--mono);font-size:10px;padding:6px 12px;border-radius:4px;display:inline-block;margin-top:4px}
+  .verdict-x{color:#e63946;background:rgba(230,57,70,.07);border:1px solid rgba(230,57,70,.2)}
+  .verdict-ok{color:var(--g);background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2)}
+  </style>
+
+  <div class="rv d1">
+    <div class="iter">
+      <div><div class="iter-n">01</div></div>
+      <div>
+        <span class="iter-badge badge-x">REJECTED</span>
+        <div class="iter-title">Dual-Paddle Claw</div>
+        <div class="iter-why">Single MG996R drives two mirrored PLA paddles via steel linkage rods. 32–200mm span. Simple to CAD, fast to print. <strong style="color:var(--t)">Failure:</strong> flat paddles slip on round objects — no surface conform. A bottle or can with no flat face has zero friction contact. No finger articulation means objects over 32mm but under ~60mm always slip free.</div>
+        <span class="iter-verdict verdict-x">× REJECTED — slip on curved objects, no conform grip</span>
+      </div>
+    </div>
+    <div class="iter">
+      <div><div class="iter-n">02</div></div>
+      <div>
+        <span class="iter-badge badge-x">REJECTED</span>
+        <div class="iter-title">Octopus Tentacles (3+3)</div>
+        <div class="iter-why">Flexible TPU tentacles — 3 left + 3 right — wrapping passively around objects like a real cephalopod arm. Concept: no rigid grip force, just conforming contact. <strong style="color:var(--t)">Failure:</strong> zero positional stiffness. Tentacles that flex under gravity cannot reliably close to a defined span or deliver consistent grip. No rigid structure = no repeatable positioning for inverse kinematics.</div>
+        <span class="iter-verdict verdict-x">× REJECTED — no rigid structure, non-repeatable grip</span>
+      </div>
+    </div>
+    <div class="iter">
+      <div><div class="iter-n">03</div></div>
+      <div>
+        <span class="iter-badge badge-x">REJECTED</span>
+        <div class="iter-title">6-Tentacle Controlled Array</div>
+        <div class="iter-why">6 individually-cable-driven TPU tentacles with a central hub. Each tentacle independently actuated for more precise closure. <strong style="color:var(--t)">Failure:</strong> cable routing requires 6 individual servo channels to be meaningful. Under $300 budget allows 1–2 extra servos max. Routing 6 independent tendons in a compact hub is mechanically intractable at this scale without a custom PCB.</div>
+        <span class="iter-verdict verdict-x">× REJECTED — 6-channel requirement exceeds budget</span>
+      </div>
+    </div>
+    <div class="iter done" style="border-color:rgba(6,214,160,.3)">
+      <div><div class="iter-n" style="color:var(--g)">04</div></div>
+      <div>
+        <span class="iter-badge badge-ok">CURRENT</span>
+        <div class="iter-title">ORCA Hand v1 — ETH Zurich Open Source</div>
+        <div class="iter-why">17-DOF anthropomorphic tendon-driven hand. All finger flexor tendons tied to a single anchor on the MG996R servo horn — full fist-close in one motion. Rigid PLA phalanges give positional accuracy; tendon routing gives conform grip. Printed in PLA at 50% infill, 90% modifier zones at joint pivots on Bambu X1 Carbon. <strong style="color:var(--g)">78.66g · 7h 33m print time.</strong> Wrist auto-leveling servo added: wrist_deg = 90 + shoulder − elbow. Tendon hardware: Power Pro 30lb braid + 2mm steel pins + 4×8×3mm bearings.</div>
+        <span class="iter-verdict verdict-ok">✓ ACTIVE — printed, assembled, in wrist CAD phase</span>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ORCA HAND SPECS -->
+  <div class="eyebrow" style="margin-top:0">ORCA Hand v1 — Specification</div>
+  <div class="g2 rv d2" style="margin-top:20px">
+    <div>
+      <div class="card cp" style="margin-bottom:20px">
+        <svg width="100%" viewBox="0 0 260 200" style="max-width:260px;display:block;margin:0 auto">
+          <rect width="260" height="200" fill="var(--bg2)"/>
+          <!-- Palm -->
+          <rect x="80" y="115" width="100" height="60" rx="7" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <!-- Thumb -->
+          <rect x="60" y="122" width="26" height="44" rx="6" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <rect x="62" y="120" width="22" height="13" rx="4" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.3"/>
+          <rect x="62" y="136" width="22" height="12" rx="3" fill="#1b2d42" stroke="#3a6090" stroke-width="1" opacity=".7"/>
+          <!-- F1 -->
+          <rect x="84" y="60" width="18" height="60" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <rect x="86" y="58" width="14" height="13" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.3"/>
+          <rect x="86" y="76" width="14" height="12" rx="2" fill="#1b2d42" stroke="#3a6090" stroke-width="1" opacity=".7"/>
+          <!-- F2 -->
+          <rect x="106" y="52" width="18" height="68" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <rect x="108" y="50" width="14" height="13" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.3"/>
+          <rect x="108" y="68" width="14" height="12" rx="2" fill="#1b2d42" stroke="#3a6090" stroke-width="1" opacity=".7"/>
+          <!-- F3 -->
+          <rect x="128" y="56" width="18" height="64" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <rect x="130" y="54" width="14" height="13" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.3"/>
+          <rect x="130" y="72" width="14" height="12" rx="2" fill="#1b2d42" stroke="#3a6090" stroke-width="1" opacity=".7"/>
+          <!-- F4 -->
+          <rect x="150" y="68" width="16" height="52" rx="5" fill="#1b2d42" stroke="#3a6090" stroke-width="1.5"/>
+          <rect x="151" y="66" width="14" height="12" rx="3" fill="#1b2d42" stroke="#06d6a0" stroke-width="1.3"/>
+          <!-- Tendon lines -->
+          <line x1="93" y1="120" x2="115" y2="170" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+          <line x1="115" y1="120" x2="120" y2="170" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+          <line x1="137" y1="120" x2="130" y2="170" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+          <line x1="158" y1="120" x2="140" y2="170" stroke="#c8c8ff" stroke-width="1" opacity=".5" stroke-dasharray="3,2"/>
+          <!-- servo -->
+          <rect x="95" y="172" width="70" height="22" rx="4" fill="#141414" stroke="#2a2a2a" stroke-width="1.5"/>
+          <text x="130" y="186" text-anchor="middle" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono" opacity=".8">MG996R</text>
+          <text x="130" y="198" text-anchor="middle" fill="#334" font-size="7" font-family="IBM Plex Mono">ALL TENDONS → ONE SERVO</text>
+        </svg>
+      </div>
+      <div class="spec-card" style="border-left-color:var(--g)">
+        <div class="spec-num" style="color:var(--g)">SOURCE</div>
+        <div class="spec-name">ORCA Hand v1 — ETH Zurich</div>
+        <div class="spec-motor">orcahand.com — Open Source, CC BY-SA 4.0</div>
+        <div class="spec-body">17-DOF anthropomorphic hand. Modified from original: all finger flexor tendons routed to single MG996R horn anchor for single-servo fist-close. Original design used independent finger servos — ReachBot simplifies to 1 channel for cost.</div>
+        <div class="spec-extra">Files: Onshape import → STL → Bambu Studio → X1 Carbon</div>
+      </div>
+    </div>
+    <div>
+      <div class="spec-card" style="border-left-color:var(--a)">
+        <div class="spec-num" style="color:var(--a)">PRINT SPECS</div>
+        <div class="spec-name">PLA — Bambu X1 Carbon</div>
+        <div class="spec-motor">78.66g · 7h 33m print time · Black PLA</div>
+        <div class="spec-body">50% infill base with 90% modifier zones at all joint pivot points. 0.2mm layer height, 4 walls. Joint pivots need max density — infill modifier applied in Bambu Studio per joint region.</div>
+        <div class="spec-extra">5 digits only — print the hand, iterate wrist separately</div>
+      </div>
+      <div class="spec-card" style="border-left-color:var(--b)">
+        <div class="spec-num" style="color:var(--b)">TENDON HARDWARE</div>
+        <div class="spec-name">Power Pro 30lb Braid</div>
+        <div class="spec-motor">+ 2mm steel pins + M2 screws + 4×8×3mm bearings</div>
+        <div class="spec-body">Power Pro 30lb spectra braid as flexor tendons — zero stretch, high strength-to-diameter ratio. 2mm steel pins at joint pivots. 4×8×3mm bearings at high-load knuckle joints. M2 screws for phalange assembly.</div>
+        <div class="spec-extra">All hardware ordered — in assembly phase</div>
+      </div>
+      <div class="spec-card" style="border-left-color:var(--a2)">
+        <div class="spec-num" style="color:var(--a2)">SERVO MODIFICATION</div>
+        <div class="spec-name">Single MG996R — All Tendons</div>
+        <div class="spec-motor">Adaptive close angle: 90 × (1 − (width − 32) / 168)°</div>
+        <div class="spec-body">All finger flexor tendons terminate at one anchor on servo horn. Servo rotates → all fingers curl simultaneously into fist. Gripper close angle is computed from object width detected by YOLOv8n — 32mm pen to 200mm bottle.</div>
+        <div class="spec-extra">Wrist auto-level: wrist_deg = 90 + shoulder − elbow</div>
+      </div>
+      <div class="dt">
+        <div class="dr dh"><span>SPEC</span><span style="text-align:right">VALUE</span></div>
+        <div class="dr"><span class="dk">Degrees of freedom</span><span class="dv">17 DOF (all fingers)</span></div>
+        <div class="dr"><span class="dk">Servo channels used</span><span class="dv">1× MG996R</span></div>
+        <div class="dr"><span class="dk">Print weight</span><span class="dv">78.66g PLA</span></div>
+        <div class="dr"><span class="dk">Print time</span><span class="dv">7h 33m (Bambu X1 C)</span></div>
+        <div class="dr"><span class="dk">Grip span</span><span class="dv">~32–200mm adaptive</span></div>
+        <div class="dr"><span class="dk">Tendon</span><span class="dv">Power Pro 30lb braid</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Stub SVGs kept for JS compatibility -->
+<svg id="gext" viewBox="0 0 1 1" style="display:none"></svg>
+<svg id="gint" viewBox="0 0 1 1" style="display:none"></svg>
+<div id="bOpen" style="display:none"></div>
+<div id="bClosed" style="display:none"></div>
+<div id="bLbl" style="display:none"></div>
+
+<!-- ═══ ARM ════════════════════════════════════════════════════════════════ -->
+<div class="page" id="p-arm">
+<div class="wrap">
+  <div class="eyebrow rv">Phase 2 — Full Arm</div>
+  <div class="h2 rv d1">ARM <span class="dim">MECHANICS</span></div>
+  <p class="md rv d2" style="max-width:600px;margin-bottom:28px">Fixed-length 760mm aluminum tube with 3 axes of motorized movement + Phase 1 gripper. Total: 1 stepper + 4 servos. Clamps to wheelchair armrest or table edge.</p>
+  <div class="card cp rv d2" style="margin-bottom:32px">
+    <div style="text-align:center;margin-bottom:14px"><span class="vp-lbl" style="color:var(--b);border:1px solid rgba(68,136,255,.3);background:rgba(68,136,255,.08);font-family:var(--mono);font-size:9px;padding:4px 14px;border-radius:100px;display:inline-block;letter-spacing:2px">FULL ARM — 3-AXIS DIAGRAM</span></div>
+    <svg id="armSVG" width="100%" viewBox="0 0 500 360" style="max-width:500px;display:block;margin:0 auto"></svg>
+    <div class="ctrls">
+      <button class="ctrl" id="af" onclick="setArm('floor')">REACH FLOOR</button>
+      <button class="ctrl on" id="at" onclick="setArm('table')">TABLE HEIGHT</button>
+      <button class="ctrl" id="ah" onclick="setArm('high')">REACH HIGH</button>
+    </div>
+    <p style="font-family:var(--mono);font-size:9px;color:var(--t3);text-align:center;margin-top:10px">Shoulder tilts from 52° down (floor) to 28° up. Base rotates 360° around clamp.</p>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="ax-card ax1"><div class="ax-tag">AXIS 1 — BASE ROTATION</div><div class="ax-name">360° Yaw</div><div class="ax-motor">NEMA 17 Stepper Motor</div><div class="ax-desc">PLA housing with lazy susan bearing. Spins entire arm left/right. Stepper gives precise positioning — exact 45° steps from Raspberry Pi.</div><div style="margin-top:8px"><span class="tag tb">360° rotation</span><span class="tag tb">Precise steps</span></div></div>
+      <div class="ax-card ax2"><div class="ax-tag">AXIS 2 — SHOULDER PITCH</div><div class="ax-name">Up/Down Tilt</div><div class="ax-motor">2× MG996R Servo (stacked)</div><div class="ax-desc">Two stacked servos because a 2.5ft arm is heavy — one stalls. Combined 18.8 kg·cm provides 44% margin above the 13.3 kg·cm minimum to hold arm horizontal.</div><div style="margin-top:8px"><span class="tag to">-52° to +28°</span><span class="tag to">44% margin</span></div></div>
+      <div class="ax-card ax3"><div class="ax-tag">AXIS 3 — WRIST ROLL</div><div class="ax-name">Gripper Rotation</div><div class="ax-motor">1× MG996R Servo</div><div class="ax-desc">Rotates the claw so it can grab objects lying flat vs standing upright. Without this you'd reposition the whole arm just to change grip angle.</div><div style="margin-top:8px"><span class="tag ty">Full 180° roll</span></div></div>
+      <div class="ax-card ax4"><div class="ax-tag">AXIS 4 — END EFFECTOR</div><div class="ax-name">ORCA Hand v1</div><div class="ax-motor">1× MG996R Servo — all 17 DOF</div><div class="ax-desc">ETH Zurich open-source anthropomorphic hand. All finger flexor tendons routed to single MG996R anchor — full fist-close in one motion. Adaptive grip angle computed from YOLOv8n object width detection.</div><div style="margin-top:8px"><span class="tag tg">17 DOF · 78.66g PLA</span><span class="tag tg">32–200mm adaptive</span></div></div>
+    </div>
+    <div>
+      <div class="h3">Motor <span class="dim">Summary</span></div>
+      <div class="mc-grid">
+        <div class="mc"><div class="mc-part">BASE ROTATION</div><div class="mc-motor">NEMA 17 stepper</div><div class="mc-why">Precise 360° control</div></div>
+        <div class="mc"><div class="mc-part">SHOULDER TILT</div><div class="mc-motor">2× MG996R servo</div><div class="mc-why">Torque for 2.5ft arm</div></div>
+        <div class="mc"><div class="mc-part">WRIST ROLL</div><div class="mc-motor">1× MG996R servo</div><div class="mc-why">Gripper orientation</div></div>
+        <div class="mc"><div class="mc-part">GRIPPER</div><div class="mc-motor">1× MG996R servo</div><div class="mc-why">Built in Phase 1</div></div>
+      </div>
+      <div class="h3" style="margin-top:28px">Materials</div>
+      <div class="mat-grid">
+        <div class="mat"><div class="mat-ph">PHASE 1 — NOW</div><div class="mat-t">PLA + Aluminum Tube</div><div class="mat-d">1-inch aluminum tube 760mm. PLA 3D printed end caps. ~350g. Cheap, easy to iterate.</div></div>
+        <div class="mat"><div class="mat-ph">FINAL PRODUCT</div><div class="mat-t">Carbon Fiber Tube</div><div class="mat-d">Pre-cut CF tube (~$15) with PLA end caps. Or Onyx filament on Markforged. 60% lighter.</div></div>
+      </div>
+      <div class="h3" style="margin-top:28px">Clamp Mount</div>
+      <div class="card cs" style="margin-top:12px">
+        <p class="sm" style="margin-bottom:10px">Two 3D-printed PLA jaws tightened with M5 bolt — same principle as a mic stand clamp. Fits armrests 15–50mm thick — all standard wheelchairs.</p>
+        <div class="dt">
+          <div class="dr dh"><span>SPEC</span><span style="text-align:right">VALUE</span></div>
+          <div class="dr"><span class="dk">Clamp range</span><span class="dv">15–50mm</span></div>
+          <div class="dr"><span class="dk">Base rotation</span><span class="dv">360° via NEMA 17</span></div>
+          <div class="dr"><span class="dk">Quick release</span><span class="dv">Yes — single M5 bolt</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ RESEARCH ══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-research">
+<div class="wrap">
+  <div class="eyebrow rv">User Research + Engineering Calculations</div>
+  <div class="h2 rv d1">DESIGN <span class="dim">RATIONALE</span></div>
+  <div class="note rv d2">⚠ PLACEHOLDER DATA — Real measurements collected during senior facility visits. Calculations are accurate; survey values updated after field research.</div>
+  <div class="g2">
+    <div class="rvl d2">
+      <div class="card cp" style="margin-bottom:18px">
+        <svg width="100%" viewBox="0 0 300 340" style="max-width:300px;display:block;margin:0 auto">
+          <rect width="300" height="340" fill="var(--bg2)"/>
+          <line x1="20" y1="285" x2="280" y2="285" stroke="var(--border2)" stroke-width="2"/>
+          <text x="270" y="298" text-anchor="end" fill="var(--t3)" font-size="8" font-family="IBM Plex Mono">FLOOR (0mm)</text>
+          <circle cx="105" cy="258" r="26" fill="none" stroke="#06d6a0" stroke-width="2.5" opacity=".8"/>
+          <circle cx="105" cy="258" r="9" fill="none" stroke="#06d6a0" stroke-width="1.5" opacity=".5"/>
+          <circle cx="105" cy="258" r="2" fill="#06d6a0"/>
+          <circle cx="195" cy="276" r="9" fill="none" stroke="#06d6a0" stroke-width="2" opacity=".6"/>
+          <rect x="115" y="155" width="74" height="10" rx="3" fill="#1a2a1a" stroke="#06d6a0" stroke-width="1.8"/>
+          <rect x="113" y="88" width="9" height="77" rx="3" fill="#1a2a1a" stroke="#06d6a0" stroke-width="1.8"/>
+          <line x1="115" y1="165" x2="107" y2="232" stroke="#06d6a0" stroke-width="2" opacity=".6"/>
+          <line x1="185" y1="165" x2="195" y2="267" stroke="#06d6a0" stroke-width="2" opacity=".6"/>
+          <rect x="115" y="88" width="74" height="8" rx="3" fill="#1a2a1a" stroke="#06d6a0" stroke-width="2"/>
+          <circle cx="115" cy="92" r="5" fill="#ff6b2b" opacity=".9"/>
+          <text x="108" y="82" text-anchor="middle" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono">MOUNT</text>
+          <circle cx="127" cy="55" r="14" fill="var(--panel2)" stroke="var(--border2)" stroke-width="1.5"/>
+          <rect x="115" y="68" width="20" height="87" rx="4" fill="var(--panel2)" stroke="var(--border2)" stroke-width="1.5"/>
+          <line x1="78" y1="285" x2="78" y2="155" stroke="rgba(255,209,102,.6)" stroke-width="1"/>
+          <line x1="72" y1="285" x2="84" y2="285" stroke="rgba(255,209,102,.6)" stroke-width="1"/>
+          <line x1="72" y1="155" x2="84" y2="155" stroke="rgba(255,209,102,.6)" stroke-width="1"/>
+          <text x="76" y="223" text-anchor="end" fill="#ffd166" font-size="8" font-family="IBM Plex Mono">480mm</text>
+          <text x="76" y="233" text-anchor="end" fill="#ffd166" font-size="7" font-family="IBM Plex Mono" opacity=".5">seat</text>
+          <line x1="268" y1="285" x2="268" y2="88" stroke="rgba(255,107,43,.6)" stroke-width="1"/>
+          <line x1="262" y1="285" x2="274" y2="285" stroke="rgba(255,107,43,.6)" stroke-width="1"/>
+          <line x1="262" y1="88" x2="274" y2="88" stroke="rgba(255,107,43,.6)" stroke-width="1"/>
+          <text x="266" y="190" text-anchor="end" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono">720mm</text>
+          <text x="266" y="200" text-anchor="end" fill="#ff6b2b" font-size="7" font-family="IBM Plex Mono" opacity=".5">armrest</text>
+          <path d="M 115 92 A 140 140 0 0 1 215 192" fill="none" stroke="#ff6b2b" stroke-width="1" stroke-dasharray="4,3" opacity=".3"/>
+          <text x="150" y="165" fill="#ff6b2b" font-size="7" font-family="IBM Plex Mono" opacity=".5">760mm</text>
+          <text x="150" y="16" text-anchor="middle" fill="var(--t3)" font-size="8" font-family="IBM Plex Mono">WHEELCHAIR DIMENSIONS</text>
+        </svg>
+      </div>
+      <div class="h3" style="margin-bottom:10px">Survey Data <span class="dim">(n=12 placeholder)</span></div>
+      <div class="data-tbl" style="margin-bottom:18px">
+        <div class="dtr dth d4"><span>MEASUREMENT</span><span>MIN</span><span style="color:var(--g)">AVG</span><span>MAX</span></div>
+        <div class="dtr d4"><span class="dn">Seat height</span><span class="dv2">430mm</span><span class="davg">480mm</span><span class="dv2">530mm</span></div>
+        <div class="dtr d4"><span class="dn">Armrest height</span><span class="dv2">640mm</span><span class="davg">720mm</span><span class="dv2">800mm</span></div>
+        <div class="dtr d4"><span class="dn">Reach zone</span><span class="dv2">0mm</span><span class="davg">950mm</span><span class="dv2">1100mm</span></div>
+        <div class="dtr d4"><span class="dn">Forward reach</span><span class="dv2">200mm</span><span class="davg">480mm</span><span class="dv2">650mm</span></div>
+        <div class="dtr d4"><span class="dn">Grip strength</span><span class="dv2">3 N</span><span class="davg">8 N</span><span class="dv2">14 N</span></div>
+      </div>
+      <div class="h3" style="margin-bottom:10px">Sources</div>
+      <div class="src"><div class="src-n">[1]</div><div class="src-t">ADA Standards for Accessible Design — Wheelchair reach range (U.S. Access Board, 2010)</div></div>
+      <div class="src"><div class="src-n">[2]</div><div class="src-t">WHO Wheelchair Service Training Package — Standard dimensions (2012)</div></div>
+      <div class="src"><div class="src-n">[3]</div><div class="src-t">Journal of Rehabilitation Research — Wheelchair user anthropometrics (2019)</div></div>
+      <div class="src"><div class="src-n">[4]</div><div class="src-t">Field measurements — Alcosta, Belmont Village, Discovery Commons (PENDING 2026)</div></div>
+    </div>
+    <div class="rvr d2">
+      <div class="h3" style="margin-bottom:14px">Engineering Calculations</div>
+      <div class="calc"><div class="calc-l">CALC 01 — ARM LENGTH</div><div class="calc-f">arm_length ≥ forward_reach_max + joint_offset
+arm_length ≥ 650mm + 110mm = 760mm</div><div class="calc-r">→ Final arm tube: 760mm (2.5ft)</div><div class="calc-n">110mm offset accounts for shoulder joint inset from armrest edge. Gripper tip reaches any object within a typical user's maximum forward reach zone.</div></div>
+      <div class="calc"><div class="calc-l">CALC 02 — SHOULDER TILT</div><div class="calc-f">floor_angle = arctan(720 / 760) = 43.5° → design 52°
+high_angle = arctan(150 / 760) = 11° → design 28°</div><div class="calc-r">→ Range: −52° (floor) to +28° (high shelf)</div><div class="calc-n">Extra margin beyond arctan minimum so gripper reaches objects directly below the chair. High angle covers standard desk height above armrest level.</div></div>
+      <div class="calc"><div class="calc-l">CALC 03 — SHOULDER TORQUE</div><div class="calc-f">τ_min = 0.35kg × 9.8 × 0.38m = 1.30 Nm = 13.3 kg·cm
+2× MG996R = 2 × 9.4 = 18.8 kg·cm</div><div class="calc-r">→ 2× MG996R gives 44% safety margin</div><div class="calc-n">0.35kg estimated for aluminum + PLA + wrist servo + gripper. Safety margin handles dynamic shock from object pickup, not just static weight.</div></div>
+      <div class="calc"><div class="calc-l">CALC 04 — GRIPPER SPAN</div><div class="calc-f">pen (14mm) → closed 32mm, Sugru -4mm = 28mm ✓
+bottle (80mm) → open 200mm = 60mm clearance ✓</div><div class="calc-r">→ 32mm closed, 200mm open — covers all targets</div><div class="calc-n">Sugru tips compress 3–4mm under grip force, effectively narrowing closed span for thin objects. 200mm gives 60mm clearance around a standard bottle.</div></div>
+      <div class="calc"><div class="calc-l">CALC 05 — FLOOR REACH</div><div class="calc-f">reach_to_floor = 760mm × sin(52°) = 599mm
+clearance = 720mm - 599mm = 121mm ✓</div><div class="calc-r">→ Gripper reaches floor with 121mm margin</div><div class="calc-n">Mounting at armrest height means design auto-adapts per user chair. 121mm clearance at full 52° tilt confirmed.</div></div>
+      <div class="val-box">
+        <div class="vbt">DESIGN VALIDATION SUMMARY</div>
+        <div class="vbr"><span class="vbp">Arm length</span><span class="vbv">760mm</span><span class="vbn">Covers max forward reach</span></div>
+        <div class="vbr"><span class="vbp">Shoulder range</span><span class="vbv">-52° to +28°</span><span class="vbn">Floor to above-table</span></div>
+        <div class="vbr"><span class="vbp">Mount height</span><span class="vbv">720mm</span><span class="vbn">Zero recalibration per user</span></div>
+        <div class="vbr"><span class="vbp">Shoulder torque</span><span class="vbv">18.8 kg·cm</span><span class="vbn">44% margin above min</span></div>
+        <div class="vbr"><span class="vbp">Floor margin</span><span class="vbv">121mm</span><span class="vbn">Comfortable buffer</span></div>
+        <div class="vbr"><span class="vbp">ORCA Hand span</span><span class="vbv">32–200mm</span><span class="vbn">Pen to water bottle · adaptive angle</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ ROADMAP ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-roadmap">
+<div class="wrap">
+  <div class="eyebrow rv">Project Roadmap</div>
+  <div class="h2 rv d1">BUILD <span class="dim">PHASES</span></div>
+  <div class="rm rv d2">
+    <div class="pm-nav" id="pmNav">
+      <div class="pm-item on" onclick="setPhase(0)"><div class="pm-n on" id="pn0">01</div><div class="pm-t">Gripper + Research</div><div class="pm-w">Weeks 1–4</div></div>
+      <div class="pm-item" onclick="setPhase(1)"><div class="pm-n" id="pn1">02</div><div class="pm-t">Full Arm Build</div><div class="pm-w">Weeks 5–12</div></div>
+      <div class="pm-item" onclick="setPhase(2)"><div class="pm-n" id="pn2">03</div><div class="pm-t">AI Integration</div><div class="pm-w">Weeks 13–20</div></div>
+      <div class="pm-item" onclick="setPhase(3)"><div class="pm-n" id="pn3">04</div><div class="pm-t">User Testing + Launch</div><div class="pm-w">Weeks 21–26</div></div>
+    </div>
+    <div>
+      <div class="pd on card cp" id="ph0">
+        <div class="ps ps-a">● ACTIVE NOW</div><div class="pt">01 — ORCA Hand + Senior Research</div><div class="pw">Weeks 1–8</div>
+        <p class="pb">Four gripper design iterations completed — landed on ORCA Hand v1 (ETH Zurich open-source). Fingers printed and assembled. Wrist CAD in progress. Software stack fully implemented in Python. Senior facility outreach running in parallel.</p>
+        <div class="task"><div class="tck a" style="background:var(--a)"><span style="color:#fff">✓</span></div><div class="tck-t">4 design iterations documented (paddle → tentacles → 6T → ORCA)</div></div>
+        <div class="task"><div class="tck a" style="background:var(--a)"><span style="color:#fff">✓</span></div><div class="tck-t">ORCA Hand v1 printed — 78.66g PLA, 7h 33m on Bambu X1 Carbon</div></div>
+        <div class="task"><div class="tck a" style="background:var(--a)"><span style="color:#fff">✓</span></div><div class="tck-t">Tendon hardware ordered (Power Pro 30lb, 2mm pins, bearings)</div></div>
+        <div class="task"><div class="tck a" style="background:var(--a)"><span style="color:#fff">✓</span></div><div class="tck-t">All 7 software modules implemented + pushed to GitHub</div></div>
+        <div class="task"><div class="tck" style="border-color:var(--a2)"></div><div class="tck-t">Complete wrist CAD — tendon channel + MG996R mount cuts</div></div>
+        <div class="task"><div class="tck a" style="background:var(--a)"><span style="color:#fff">✓</span></div><div class="tck-t">Call Belmont Village — speak with Jennifer Weist</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Schedule and complete 5 facility visits</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Document wheelchair user pain points</div></div>
+        <div style="margin-top:16px"><span class="tag tb">Hardware</span><span class="tag tg">Software ✓</span><span class="tag ty">Research</span></div>
+      </div>
+      <div class="pd card cp" id="ph1">
+        <div class="ps ps-u">○ UPCOMING</div><div class="pt">02 — Full Arm Hardware Build</div><div class="pw">Weeks 5–12</div>
+        <p class="pb">Build and assemble the complete 3-axis arm. NEMA 17 rotating base with clamp mount, dual-servo shoulder joint, wrist roll servo, integrating Phase 1 ORCA Hand. By end of this phase, all 4 axes functional and mounted to a test wheelchair.</p>
+        <div class="task"><div class="tck"></div><div class="tck-t">Design shoulder joint housing in Onshape</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Design rotating base with lazy susan bearing</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Purchase NEMA 17 stepper + A4988 driver</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Purchase aluminum tube + cut to 760mm</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Assemble shoulder, arm, wrist, gripper</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Test all 4 axes manually</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Mount to test wheelchair + iterate</div></div>
+        <div style="margin-top:16px"><span class="tag tb">Hardware</span><span class="tag to">Mechanical</span></div>
+      </div>
+      <div class="pd card cp" id="ph2">
+        <div class="ps ps-u">○ UPCOMING</div><div class="pt">03 — AI + Software Integration</div><div class="pw">Weeks 13–20</div>
+        <p class="pb">Raspberry Pi 4 handles onboard processing. OpenCV object detection locates objects visually. Whisper API enables voice commands — users say "pick up the remote" without touching controls. This is where ReachBot goes from mechanical to autonomous.</p>
+        <div class="task"><div class="tck"></div><div class="tck-t">Set up Raspberry Pi 4 with Python 3</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Wire all servos + stepper to Pi via GPIO</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Implement inverse kinematics for positioning</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Integrate Pi Camera + OpenCV object detection</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Integrate Whisper API for voice commands</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">End-to-end: voice command → successful pickup</div></div>
+        <div style="margin-top:16px"><span class="tag tg">Software</span><span class="tag tp">AI/ML</span><span class="tag tg">Python</span></div>
+      </div>
+      <div class="pd card cp" id="ph3">
+        <div class="ps ps-u">○ UPCOMING</div><div class="pt">04 — User Testing + Competition Launch</div><div class="pw">Weeks 21–26</div>
+        <p class="pb">Return to senior facilities for real-world testing with wheelchair users. Structured feedback sessions. Film demo video. Write research paper. Submit to Regeneron STS, Conrad Challenge, and Congressional App Challenge.</p>
+        <div class="task"><div class="tck"></div><div class="tck-t">Design structured user testing protocol</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Conduct 3+ sessions at senior facilities</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Collect quantitative + qualitative feedback</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Film professional demo video</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Write full research paper</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Submit to Regeneron STS (November 2026)</div></div>
+        <div class="task"><div class="tck"></div><div class="tck-t">Submit to Conrad Challenge (January 2027)</div></div>
+        <div style="margin-top:16px"><span class="tag ty">Research</span><span class="tag to">Competitions</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ OUTREACH ══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-outreach">
+<div class="wrap">
+  <div class="eyebrow rv">Senior Outreach</div>
+  <div class="h2 rv d1">RESEARCH <span class="dim">LOG</span></div>
+  <p class="md rv d2" style="max-width:620px;margin-bottom:14px">Visiting 5 local senior facilities to interview wheelchair users before building anything. This research shapes every design decision — from arm length to gripper span.</p>
+  <div class="note rv d3">⚠ Real interview data will be added after facility visits are complete.</div>
+  <div class="fc-grid rv d3">
+    <div class="fc pri"><div class="fc-type cm">COMMUNITY CENTER</div><div class="fc-name">Alcosta Senior &amp; Community Center</div><div class="fc-ph">(925) 973-3250</div><div class="fc-ct">Ask for program/activities coordinator</div><div class="fc-hr">Mon–Fri 8:30AM–5PM</div><span class="fc-badge fc-pend">○ PENDING</span></div>
+    <div class="fc pri"><div class="fc-type lv">LIVING FACILITY</div><div class="fc-name">Belmont Village San Ramon</div><div class="fc-ph">(925) 217-8786</div><div class="fc-ct">Ask for <strong>Jennifer Weist</strong></div><div class="fc-hr">Mon–Sun 9AM–5PM</div><span class="fc-badge fc-call">● CALL TODAY</span></div>
+    <div class="fc sec"><div class="fc-type lv">LIVING FACILITY</div><div class="fc-name">Discovery Commons San Ramon</div><div class="fc-ph">(925) 725-1485</div><div class="fc-ct">Ask for <strong>Kiel Stromgren</strong></div><div class="fc-hr">Open 24 hours</div><span class="fc-badge fc-pend">○ PENDING</span></div>
+    <div class="fc sec"><div class="fc-type lv">LIVING FACILITY</div><div class="fc-name">Ivy Park at San Ramon</div><div class="fc-ph">(925) 275-5363</div><div class="fc-ct">Ask for <strong>Cindy or Melissa</strong></div><div class="fc-hr">Open 24 hours</div><span class="fc-badge fc-pend">○ PENDING</span></div>
+    <div class="fc sec"><div class="fc-type lv">LIVING FACILITY</div><div class="fc-name">Brookdale San Ramon</div><div class="fc-ph">(925) 831-3964</div><div class="fc-ct">Ask for <strong>MJ</strong> (Sales &amp; Marketing)</div><div class="fc-hr">Open 24 hours</div><span class="fc-badge fc-pend">○ PENDING</span></div>
+  </div>
+  <div class="card cp rv d4" style="margin-top:32px">
+    <div class="h3" style="margin-bottom:16px">Planned Interview Questions</div>
+    <div class="q-grid">
+      <div class="qi"><span class="qn">Q01</span><span class="qt">What objects do you drop or struggle to reach most often?</span></div>
+      <div class="qi"><span class="qn">Q02</span><span class="qt">How do you currently handle dropped objects?</span></div>
+      <div class="qi"><span class="qn">Q03</span><span class="qt">How many times per day does this happen?</span></div>
+      <div class="qi"><span class="qn">Q04</span><span class="qt">Would you use a robotic arm attached to your chair?</span></div>
+      <div class="qi"><span class="qn">Q05</span><span class="qt">What's the most frustrating part of depending on others?</span></div>
+      <div class="qi"><span class="qn">Q06</span><span class="qt">What size and weight of objects matter most to you?</span></div>
+      <div class="qi"><span class="qn">Q07</span><span class="qt">Voice, button, or automatic control — which do you prefer?</span></div>
+      <div class="qi"><span class="qn">Q08</span><span class="qt">Maximum price you would pay for a device like this?</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ PARTS ══════════════════════════════════════════════════════════════ -->
+<div class="page" id="p-parts">
+<div class="wrap">
+  <div class="eyebrow rv">Bill of Materials</div>
+  <div class="h2 rv d1">PARTS <span class="dim">LIST</span></div>
+  <div class="rv d2">
+    <div class="part"><div class="pi">⚙️</div><div class="pinfo"><div class="pname">MG996R Servo Motor (4-pack)</div><div class="pspec">Torque: 9.4kg/cm | 4.8–7.2V | 180° rotation | Metal gear</div></div><div class="pprice">~$20</div><a href="https://www.amazon.com/4-Pack-MG996R-Torque-Digital-Helicopter/dp/B07MFK266B" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">🖨️</div><div class="pinfo"><div class="pname">ORCA Hand v1 — 5 Digits (3D Printed PLA)</div><div class="pspec">78.66g · 50% infill + 90% joint zones · Bambu X1 Carbon · 7h 33m</div></div><div class="pprice">FREE</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🧵</div><div class="pinfo"><div class="pname">Power Pro 30lb Spectra Braid (Tendons)</div><div class="pspec">Zero stretch · High strength-to-diameter · Flexor tendons for all fingers</div></div><div class="pprice">~$18</div><a href="https://www.amazon.com/Power-Pro-Spectra-Braided-Fishing/dp/B000AYYEX0" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">🔩</div><div class="pinfo"><div class="pname">2mm Steel Pins (Joint Pivots)</div><div class="pspec">For ORCA Hand joint pivots · Stainless · Pack of 50</div></div><div class="pprice">~$10</div><a href="https://www.amazon.com/s?k=2mm+steel+dowel+pins" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">⚙️</div><div class="pinfo"><div class="pname">4×8×3mm Miniature Bearings (x8)</div><div class="pspec">High-load knuckle joints · ORCA Hand spec · MR84ZZ</div></div><div class="pprice">~$12</div><a href="https://www.amazon.com/s?k=MR84ZZ+4x8x3mm+bearing" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">🔩</div><div class="pinfo"><div class="pname">M3 Screws + Nuts Assortment</div><div class="pspec">M3x16mm hinges | M3x10mm servo | Nylon lock nuts</div></div><div class="pprice">~$14</div><a href="https://www.amazon.com/Assortment-Screws-Washers-Stainless-Steel/dp/B07H9YRRTB" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">🎛️</div><div class="pinfo"><div class="pname">Servo Tester (PWM)</div><div class="pspec">3-channel | Knob controls angle | No microcontroller needed</div></div><div class="pprice">~$12</div><a href="https://www.amazon.com/LewanSoul-Digital-Servo-Tester-Board/dp/B0CB8L2ZRS" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">🔋</div><div class="pinfo"><div class="pname">4x AA Battery Holder w/ Switch</div><div class="pspec">4x AA = 6V total | Fits MG996R 4.8–7.2V range</div></div><div class="pprice">~$12</div><a href="https://www.amazon.com/LAMPVPATH-Battery-Holder-Switch-Leads/dp/B07L9M6VZK" target="_blank" class="amz">🛒 AMAZON</a></div>
+    <div class="part"><div class="pi">⚡</div><div class="pinfo"><div class="pname">NEMA 17 Stepper Motor</div><div class="pspec">Phase 2 — base rotation | 1.7A | 12V</div></div><div class="pprice">~$22</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🔌</div><div class="pinfo"><div class="pname">A4988 Stepper Driver</div><div class="pspec">Phase 2 — motor control | Microstepping | 2A max</div></div><div class="pprice">~$10</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🏗️</div><div class="pinfo"><div class="pname">Aluminum Tube 760mm (1-inch)</div><div class="pspec">Phase 2 — arm structure | ~150g | Anodized</div></div><div class="pprice">~$18</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🔄</div><div class="pinfo"><div class="pname">Lazy Susan Bearing</div><div class="pspec">Phase 2 — base rotation mount | 100mm diameter</div></div><div class="pprice">~$14</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🤖</div><div class="pinfo"><div class="pname">Raspberry Pi 4 (2GB)</div><div class="pspec">Phase 3 — AI onboard processing | Python 3 | GPIO</div></div><div class="pprice">~$45</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">📷</div><div class="pinfo"><div class="pname">Pi Camera Module v2</div><div class="pspec">Phase 3 — OpenCV object detection | 8MP | CSI</div></div><div class="pprice">~$20</div><span style="width:90px"></span></div>
+    <div class="part"><div class="pi">🔗</div><div class="pinfo"><div class="pname">Jumper Wires + Breadboard</div><div class="pspec">Phase 3 — GPIO connections | 40-pin header | Prototyping</div></div><div class="pprice">~$18</div><span style="width:90px"></span></div>
+  </div>
+  <div class="budget rv d3">
+    <div class="br"><div><div class="bn">Phase 1 — ORCA Hand components</div><div class="bnote">Servos, Power Pro braid, pins, bearings, M2 screws, tester, batteries</div></div><div class="bv">~$90</div></div>
+    <div class="br"><div><div class="bn">Phase 2 — Arm hardware</div><div class="bnote">NEMA 17, A4988, aluminum tube, lazy susan bearing</div></div><div class="bv">~$64</div></div>
+    <div class="br"><div><div class="bn">Phase 3 — AI components</div><div class="bnote">Raspberry Pi 4, Pi Camera, jumper wires, breadboard</div></div><div class="bv">~$83</div></div>
+    <div class="br"><div><div class="bn">3D Printed Parts (all phases)</div><div class="bnote">ORCA Hand digits, joint housings, clamp — Bambu X1 Carbon</div></div><div class="bv free">FREE</div></div>
+    <div class="br"><div style="font-weight:700;color:var(--t);font-size:15px">TOTAL — Complete ReachBot (All 3 Phases)</div><div class="bv total">~$250</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ ASSEMBLY ══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-assembly">
+<div class="wrap">
+  <div class="eyebrow rv">Build Instructions</div>
+  <div class="h2 rv d1">ASSEMBLY <span class="dim">ORDER</span></div>
+  <div class="rv d2">
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">01</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Print ORCA Hand digits ✓ Done</div><div class="asm-d">5 digits exported from Onshape STEP → Bambu Studio. 50% infill base, 90% modifier zones at all joint pivot regions. 0.2mm layer height, 4 walls, black PLA. Print palm and phalanges together per-digit.</div><div class="asm-note">→ Complete: 78.66g, 7h 33m on Bambu X1 Carbon</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">02</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Press bearings into knuckle housings</div><div class="asm-d">Press 4×8×3mm MR84ZZ bearings into each high-load knuckle joint housing. Use a flat surface and thumb pressure — do not hammer. Bearing should seat flush with outer face of housing.</div><div class="asm-note">→ Test: bearing should spin freely with no lateral play</div><div class="asm-warn">⚠ Crooked press-in = joint binding. Seat perpendicular.</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">03</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Insert 2mm steel pivot pins</div><div class="asm-d">Push 2mm steel pins through bearing inner races and pivot holes of each phalange joint. Pins must be flush on both ends — file if protruding. Each finger has 3 joints × 1 pin = 15 pins total + thumb.</div><div class="asm-note">→ Each joint should flex freely with no lateral wobble</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">04</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Route Power Pro tendon per finger</div><div class="asm-d">Thread Power Pro 30lb braid through the tendon channel on the flexor side of each phalange, anchoring at the fingertip. Keep tension consistent — slack = limp finger. Route all tendons through palm channel to servo horn anchor point.</div><div class="asm-note">→ 5 tendons total, all terminating at servo horn</div><div class="asm-warn">⚠ Do not knot — use crimp sleeve or heat-seal end.</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">05</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Anchor all tendons to MG996R horn</div><div class="asm-d">All 5 flexor tendons tie to a single anchor point on the MG996R servo horn. Pre-tension each tendon to match — unequal tension = uneven curl. Use the hole at 18–20mm from shaft center for anchor attachment.</div><div class="asm-note">→ Horn at 90° = hand open. Full rotation = full fist</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">06</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">Test fist-close with servo tester</div><div class="asm-d">Plug MG996R into tester center channel. Insert 4 AA batteries. Slowly rotate knob from open to closed. All 5 fingers should curl simultaneously into a fist. Check each finger curls symmetrically.</div><div class="asm-note">→ SUCCESS = full fist with no finger lagging</div><div class="asm-warn">⚠ One finger doesn't curl → re-tension that tendon</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">07</div><div class="asm-vl"></div></div><div class="asm-b"><div class="asm-t">CAD wrist modification (in progress)</div><div class="asm-d">Onshape: add tendon channel through wrist housing and MG996R mount cut for wrist auto-leveling servo. Wrist_deg = 90 + shoulder_deg − elbow_deg. This compensates for combined link bend during arm positioning.</div><div class="asm-note">→ In progress — tendon channel and mount cuts defined</div></div></div>
+    <div class="asm-row"><div class="asm-l"><div class="asm-c">08</div></div><div class="asm-b"><div class="asm-t">Grip test + document results</div><div class="asm-d">Try gripping: TV remote, full water bottle, pen, phone. Log object width, grip success, and any slip. Data feeds directly into Regeneron STS research paper and YOLOv8n object-width calibration.</div><div class="asm-note">→ Document everything — this is your baseline research</div></div></div>
+  </div>
+  <hr/>
+  <div class="eyebrow" style="margin-top:0">Engineering Risk Analysis</div>
+  <div class="h3" style="margin-bottom:20px">FAILURE <span class="dim">MODES</span></div>
+  <div class="fail-grid rv d2">
+    <div class="fail"><div class="fl">TENDON</div><div class="ft">One finger doesn't curl</div><div class="ff">Fix: <span>Re-tension that tendon — slack at anchor. Pull tighter before re-anchoring to horn.</span></div></div>
+    <div class="fail"><div class="fl">JOINT</div><div class="ft">Finger joint binds / stiff</div><div class="ff">Fix: <span>Bearing not seated flush. Press again with flat plate. Check pin for burrs — file smooth.</span></div></div>
+    <div class="fail"><div class="fl">GRIP</div><div class="ft">Hand can't fully close to fist</div><div class="ff">Fix: <span>Tendon slack — re-anchor all tendons with equal tension. Check horn anchor point hasn't slipped.</span></div></div>
+    <div class="fail"><div class="fl">TENDON</div><div class="ft">Tendon snaps under load</div><div class="ff">Fix: <span>Power Pro 30lb is over-spec for hand loads. Check crimp/anchor point — usually fails there, not mid-line.</span></div></div>
+    <div class="fail"><div class="fl">SERVO</div><div class="ft">MG996R buzzes, no motion</div><div class="ff">Fix: <span>Tendons too tight — servo stalls against own torque limit. Reduce pre-tension slightly.</span></div></div>
+    <div class="fail"><div class="fl">PRINT</div><div class="ft">Phalange joint cracks under grip</div><div class="ff">Fix: <span>Joint infill modifier not applied. Re-slice with 90% infill zone at all pivot housings.</span></div></div>
+    <div class="fail"><div class="fl">POWER</div><div class="ft">Servo tester unresponsive</div><div class="ff">Fix: <span>Check AA batteries — need at least 5V. Replace if low.</span></div></div>
+    <div class="fail"><div class="fl">WRIST</div><div class="ft">Wrist doesn't level during reach</div><div class="ff">Fix: <span>Verify wrist_deg formula: = 90 + shoulder_deg − elbow_deg. Check PCA9685 channel mapping in config.py.</span></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ COMPETE ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="p-compete">
+<div class="wrap">
+  <div class="eyebrow rv">Competition Strategy</div>
+  <div class="h2 rv d1">COMPETE <span class="dim">&amp; WIN</span></div>
+  <p class="md rv d2" style="max-width:620px;margin-bottom:32px">With a working prototype, real user research, and documented engineering calculations, ReachBot is positioned to compete nationally. Key differentiator: most entries are ideas. ReachBot is a working device with field research.</p>
+  <div class="comp-grid rv d2">
+    <div class="comp"><div class="comp-tier tg1">TIER 1 — FLAGSHIP</div><div class="comp-name">Regeneron STS</div><div class="comp-desc">America's most prestigious high school science competition. Judged by Nobel laureates. Top 300 scholars in January, top 40 finalists to Washington D.C. in March.</div><div class="comp-dl">Deadline: Early November 2026</div><div class="comp-pr">$250,000 top prize | $25,000 per finalist</div><div class="comp-why">ReachBot's combination of user research, mechanical engineering, and AI is exactly what STS judges look for. Senior center interviews are a major differentiator.</div></div>
+    <div class="comp"><div class="comp-tier tg1">TIER 1 — FLAGSHIP</div><div class="comp-name">Conrad Challenge</div><div class="comp-desc">NASA-endorsed innovation competition. Health &amp; Nutrition is the primary target category for ReachBot. Real judging by industry professionals.</div><div class="comp-dl">Deadline: January 2027</div><div class="comp-pr">$10,000 grants + NASA recognition</div><div class="comp-why">Senior independence directly matches Conrad's health category. Hardware + research narrative is ideal for this competition.</div></div>
+    <div class="comp"><div class="comp-tier tg2">TIER 2 — STRONG FIT</div><div class="comp-name">Congressional App Challenge</div><div class="comp-desc">Official US House of Representatives tech competition. Winning apps displayed in the US Capitol. Open to all high school students nationwide.</div><div class="comp-dl">Deadline: November 2026</div><div class="comp-pr">Display in US Capitol + recognition</div><div class="comp-why">Once Whisper voice + OpenCV AI layer complete in Phase 3, this becomes a top target. Software-heavy judges respond to the AI narrative.</div></div>
+    <div class="comp"><div class="comp-tier tg2">TIER 2 — STRONG FIT</div><div class="comp-name">Lemelson-MIT InvenTeams</div><div class="comp-desc">$10,000 grants to high school teams inventing solutions to genuine problems. Emphasizes invention process and documentation, not just a finished product.</div><div class="comp-dl">Application opens February 2027</div><div class="comp-pr">$10,000 per team grant</div><div class="comp-why">Apply in February 2027 with working Phase 2 arm and Phase 1 research data. A working prototype dramatically increases selection odds.</div></div>
+  </div>
+  <div class="ct rv d3">
+    <div class="ct-t">COMPETITION TIMELINE</div>
+    <div class="ctr"><div class="ctw">Summer 2026</div><div class="ctx">Finish full mechanical arm (Phase 2). Begin AI integration (Phase 3). Complete all senior facility visits and document research data.</div></div>
+    <div class="ctr"><div class="ctw">September 2026</div><div class="ctx">Finalize Regeneron STS research paper. Film demo video with working prototype.</div></div>
+    <div class="ctr"><div class="ctw">November 2026</div><div class="ctx">Submit Regeneron STS. Submit Congressional App Challenge (if AI complete). Begin Conrad application.</div></div>
+    <div class="ctr"><div class="ctw">January 2027</div><div class="ctx">Submit Conrad Challenge with full research writeup, prototype demo, and user testing results.</div></div>
+    <div class="ctr"><div class="ctw">February 2027</div><div class="ctx">Lemelson-MIT InvenTeams application opens on National Inventors Day (Feb 11). Apply with working prototype.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ TECH ════════════════════════════════════════════════════════════════ -->
+<div class="page" id="p-tech">
+<div class="wrap">
+  <div class="eyebrow rv">Technology</div>
+  <div class="h2 rv d1">TECH <span class="dim">STACK</span></div>
+  <div class="stack rv d2">
+    <div class="sk card"><div class="sk-ph">PHASE 1 — NOW</div><div class="si done">ORCA Hand v1 (ETH Zurich)</div><div class="si done">Bambu X1 Carbon PLA</div><div class="si done">MG996R Servo x1 (all tendons)</div><div class="si done">Power Pro 30lb Tendon Braid</div><div class="si done">Python 7-Module Stack</div><div class="si done">YOLOv8n + Whisper API</div></div>
+    <div class="sk card"><div class="sk-ph">PHASE 2 — BUILD</div><div class="si up">NEMA 17 Stepper</div><div class="si up">A4988 Driver</div><div class="si up">Aluminum Tube 760mm</div><div class="si up">Lazy Susan Bearing</div><div class="si up">MG996R x3 (more)</div><div class="si up">PLA Joint Housings</div></div>
+    <div class="sk card"><div class="sk-ph">PHASE 3 — AI</div><div class="si up">Raspberry Pi 4</div><div class="si up">Pi Camera Module</div><div class="si up">OpenCV Detection</div><div class="si up">Whisper API (voice)</div><div class="si up">Python 3 + GPIO</div><div class="si up">Inverse Kinematics</div></div>
+    <div class="sk card"><div class="sk-ph">PHASE 4 — DEMO</div><div class="si up">User Testing Protocol</div><div class="si up">Video Documentation</div><div class="si up">Research Paper</div><div class="si up">Competition Submissions</div><div class="si up">GitHub Documentation</div><div class="si up">Lemelson Application</div></div>
+  </div>
+  <hr/>
+  <footer class="footer">
+    <div><div class="fb">REACH<br>BOT</div></div>
+    <div class="fi">
+      <div>ANSH JAITLY</div>
+      <div>DOUGHERTY VALLEY HIGH SCHOOL</div>
+      <div>SAN RAMON, CA — CLASS OF 2028</div>
+      <div style="margin-top:6px" class="fa">ORCA HAND v1 — ASSEMBLED</div>
+      <div class="fa">WRIST CAD · SOFTWARE LIVE · GITHUB OPEN</div>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:2px;margin-bottom:10px">NAVIGATE</div>
+      <div class="fl-links">
+        <button class="fl-link" onclick="go('hero')">HOME</button>
+        <button class="fl-link" onclick="go('problem')">PROBLEM</button>
+        <button class="fl-link" onclick="go('story')">STORY</button>
+        <button class="fl-link" onclick="go('gripper')">GRIPPER</button>
+        <button class="fl-link" onclick="go('arm')">FULL ARM</button>
+        <button class="fl-link" onclick="go('research')">RESEARCH</button>
+        <button class="fl-link" onclick="go('compete')">COMPETE</button>
+        <a href="https://github.com/anshjaitly/reachbot" target="_blank" class="fl-link" style="text-decoration:none">⌥ GITHUB</a>
+      </div>
+    </div>
+  </footer>
+</div>
+</div>
+
+</div><!-- end shell -->
+
+<script>
+// ═══ THEME ═══════════════════════════════════════════════════════════════
+const H = document.documentElement;
+document.getElementById('tb').onclick = () => {
+  const dark = H.dataset.theme === 'dark';
+  H.dataset.theme = dark ? 'light' : 'dark';
+  document.getElementById('tb').textContent = dark ? '🌙' : '☀️';
+};
+
+// ═══ PARALLAX SCROLL ══════════════════════════════════════════════════════
+const op1 = document.getElementById('op1');
+const op2 = document.getElementById('op2');
+const op3 = document.getElementById('op3');
+const bgGrid = document.querySelector('.bg-grid');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  op1.style.transform = `translate(${y * 0.04}px, ${y * 0.12}px)`;
+  op2.style.transform = `translate(${-y * 0.06}px, ${-y * 0.08}px)`;
+  op3.style.transform = `translate(${y * 0.03}px, ${-y * 0.05}px)`;
+  bgGrid.style.transform = `translateY(${y * 0.25}px)`;
+}, { passive: true });
+
+// ═══ NAV: scroll-to + active tab tracking ════════════════════════════════
+function go(id) {
+  const page = document.getElementById('p-' + id);
+  if (page) {
+    const top = page.getBoundingClientRect().top + window.scrollY - 91;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => go(t.dataset.tab));
+
+// ── active tab via IntersectionObserver ──
+const tabObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id.replace('p-', '');
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === id));
+      const activeTab = document.querySelector(`.tab[data-tab="${id}"]`);
+      if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  });
+}, { threshold: 0.25 });
+document.querySelectorAll('.page').forEach(p => tabObs.observe(p));
+
+// ═══ REVEALS ══════════════════════════════════════════════════════════════
+const revObs = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.rv,.rvl,.rvr').forEach(el => revObs.observe(el));
+
+// ── ibar fills trigger on scroll ──
+const ibarObs = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if (e.isIntersecting) { e.target.style.width = e.target.dataset.w + '%'; ibarObs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.ibar-fill').forEach(b => ibarObs.observe(b));
+
+// ═══ COUNTERS ═════════════════════════════════════════════════════════════
+function cnt(el, target, dur) {
+  if (!el) return;
+  const t0 = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    el.textContent = Math.floor(p * target);
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+setTimeout(() => {
+  cnt(document.getElementById('cv'), 5, 1400);
+  cnt(document.getElementById('cb'), 250, 1800);
+}, 100);
+
+// ═══ ROADMAP ══════════════════════════════════════════════════════════════
+function setPhase(i) {
+  document.querySelectorAll('.pm-item').forEach((el,j) => el.classList.toggle('on', j===i));
+  for (let j=0;j<4;j++) {
+    const n = document.getElementById('pn'+j);
+    if (n) n.classList.toggle('on', j===i);
+    const p = document.getElementById('ph'+j);
+    if (p) p.classList.toggle('on', j===i);
+  }
+}
+
+// ═══ GRIPPER DIAGRAM ══════════════════════════════════════════════════════
+let gOpen = true, gLbl = true;
+
+function drawG() { drawGE(); drawGI(); }
+
+function drawGE() {
+  const svg = document.getElementById('gext'); if (!svg) return;
+  const W=260,H=400,cx=130,fw=20,padW=60,fH=70,aH=50,tH=14;
+  const sp = gOpen?50:10, lx=cx-sp-padW, rx=cx+sp;
+  const fT=76, aTY=fT+fH, aBY=aTY+aH, hY=aBY-8, sY=aBY+18, sH=40;
+
+  function pad(px, side) {
+    let h=`<rect x="${px}" y="${fT}" width="${padW}" height="${fH}" rx="6" fill="#2a4060" stroke="#3a6090" stroke-width="2"/>`;
+    for(let i=0;i<3;i++){h+=`<rect x="${px+i*fw+2}" y="${fT-6}" width="${fw-4}" height="${tH+6}" rx="5" fill="#05b387" opacity=".9"/>
+      <rect x="${px+i*fw+4}" y="${fT-5}" width="8" height="5" rx="3" fill="rgba(255,255,255,.15)"/>`;}
+    h+=`<rect x="${px+padW/2-6}" y="${aTY}" width="12" height="${aH}" rx="4" fill="#2a4060" stroke="#3a6090" stroke-width="2"/>
+        <circle cx="${px+padW/2}" cy="${hY}" r="7" fill="#111" stroke="#ffd166" stroke-width="1.8"/>
+        <circle cx="${px+padW/2}" cy="${hY}" r="3.5" fill="#222" stroke="#555" stroke-width="1"/>
+        <line x1="${px+padW/2-3}" y1="${hY}" x2="${px+padW/2+3}" y2="${hY}" stroke="#666" stroke-width="1.2"/>
+        <line x1="${px+padW/2}" y1="${hY-3}" x2="${px+padW/2}" y2="${hY+3}" stroke="#666" stroke-width="1.2"/>`;
+    if(gLbl){
+      if(side==='L'){h+=`
+        <line x1="${px}" y1="${fT+fH/2}" x2="${px-16}" y2="${fT+fH/2}" stroke="#3a6090" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${fT+fH/2+4}" text-anchor="end" fill="#3a6090" font-size="8" font-family="IBM Plex Mono">FINGER SECTION</text>
+        <line x1="${px+4}" y1="${fT+2}" x2="${px-16}" y2="${fT-10}" stroke="#05b387" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${fT-6}" text-anchor="end" fill="#05b387" font-size="8" font-family="IBM Plex Mono">SUGRU TIP</text>
+        <line x1="${px+padW/2-8}" y1="${hY}" x2="${px-16}" y2="${hY+14}" stroke="#ffd166" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${hY+18}" text-anchor="end" fill="#ffd166" font-size="8" font-family="IBM Plex Mono">HINGE PIN</text>`;}
+      else{h+=`<line x1="${px+padW}" y1="${fT+fH/2}" x2="${px+padW+16}" y2="${fT+fH/2}" stroke="#3a6090" stroke-width=".8" opacity=".7"/>
+        <text x="${px+padW+18}" y="${fT+fH/2+4}" fill="#3a6090" font-size="8" font-family="IBM Plex Mono">PLA PADDLE</text>`;}
+    }
+    return h;
+  }
+
+  const sl = gOpen?`~200mm OPEN SPAN`:`~32mm CLOSED`;
+  const x1 = gOpen?lx:lx+padW, x2 = gOpen?rx+padW:rx;
+  svg.innerHTML=`
+    <line x1="${x1}" y1="${fT-24}" x2="${x2}" y2="${fT-24}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <line x1="${x1}" y1="${fT-28}" x2="${x1}" y2="${fT-20}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <line x1="${x2}" y1="${fT-28}" x2="${x2}" y2="${fT-20}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <text x="${cx}" y="${fT-28}" text-anchor="middle" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono" font-weight="700">${sl}</text>
+    ${pad(lx,'L')} ${pad(rx,'R')}
+    <rect x="${cx-42}" y="${sY+10}" width="12" height="8" rx="2" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="1.5"/>
+    <rect x="${cx+30}" y="${sY+10}" width="12" height="8" rx="2" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="1.5"/>
+    <rect x="${cx-30}" y="${sY}" width="60" height="${sH}" rx="7" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="2"/>
+    <text x="${cx}" y="${sY+18}" text-anchor="middle" fill="rgba(255,107,43,.5)" font-size="7" font-family="IBM Plex Mono">MG996R</text>
+    <circle cx="${cx}" cy="${sY-6}" r="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
+    ${gLbl?`<line x1="${cx+30}" y1="${sY+sH/2}" x2="${cx+46}" y2="${sY+sH/2}" stroke="#888" stroke-width=".8" opacity=".7"/><text x="${cx+48}" y="${sY+sH/2+4}" fill="#888" font-size="8" font-family="IBM Plex Mono">SERVO</text>`:''}
+    <path d="M${cx-5},${sY+sH} Q${cx-8},${sY+60} ${cx-6},${H-28}" fill="none" stroke="#e63946" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+    <path d="M${cx},${sY+sH} Q${cx},${sY+60} ${cx},${H-28}" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+    <path d="M${cx+5},${sY+sH} Q${cx+8},${sY+60} ${cx+6},${H-28}" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+    <rect x="${cx-9}" y="${sY+sH+15}" width="18" height="5" rx="2" fill="#333" stroke="#555" stroke-width="1"/>
+    ${gLbl?`<text x="${cx+28}" y="${sY+sH+14}" fill="#e63946" font-size="8" font-family="IBM Plex Mono">PWR</text>
+    <text x="${cx+28}" y="${sY+sH+24}" fill="#888" font-size="8" font-family="IBM Plex Mono">GND</text>
+    <text x="${cx+28}" y="${sY+sH+34}" fill="#ffd166" font-size="8" font-family="IBM Plex Mono">SIG</text>`:''}`;
+}
+
+function drawGI() {
+  const svg = document.getElementById('gint'); if (!svg) return;
+  const W=260,H=400,cx=130,fw=20,padW=60,fH=70,aH=50,tH=14;
+  const sp=gOpen?50:10, lx=cx-sp-padW, rx=cx+sp;
+  const fT=76,aTY=fT+fH,aBY=aTY+aH,hY=aBY-8,lkY=hY-18,sY=aBY+18,sH=40,shCY=sY-6;
+  const hA=gOpen?-38:26, hR=hA*Math.PI/180;
+  const hTX=cx+Math.sin(hR)*28, hTY=shCY-Math.cos(hR)*28;
+  const lHX=lx+padW/2, rHX=rx+padW/2;
+
+  function rod(tx,ty){const mX=(hTX+tx)/2,mY=(hTY+ty)/2+10;return`
+    <path d="M${hTX},${hTY} Q${mX},${mY} ${tx},${ty}" fill="none" stroke="#c8c8ff" stroke-width="5" stroke-linecap="round" opacity=".1"/>
+    <path d="M${hTX},${hTY} Q${mX},${mY} ${tx},${ty}" fill="none" stroke="#c8c8ff" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+    <circle cx="${tx}" cy="${ty}" r="3.5" fill="#c8c8ff"/>`;}
+
+  function pad(px,side){
+    let h=`<rect x="${px}" y="${fT}" width="${padW}" height="${fH}" rx="5" fill="#0e1e30" stroke="#ff6b2b" stroke-width="1.5"/>
+      <line x1="${px+fw}" y1="${fT+tH+4}" x2="${px+fw}" y2="${aTY-2}" stroke="rgba(255,107,43,.2)" stroke-width="1"/>
+      <line x1="${px+fw*2}" y1="${fT+tH+4}" x2="${px+fw*2}" y2="${aTY-2}" stroke="rgba(255,107,43,.2)" stroke-width="1"/>`;
+    for(let i=0;i<3;i++){h+=`<rect x="${px+i*fw+2}" y="${fT-5}" width="${fw-4}" height="${tH+5}" rx="5" fill="#06d6a0" opacity=".75"/>`;}
+    h+=`<rect x="${px+padW/2-6}" y="${aTY}" width="12" height="${aH}" rx="3" fill="#0e1e30" stroke="#ff6b2b" stroke-width="1.5"/>
+        <circle cx="${px+padW/2}" cy="${hY}" r="8" fill="#0a0a0a" stroke="#ffd166" stroke-width="2.5"/>
+        <circle cx="${px+padW/2}" cy="${hY}" r="4.5" fill="#141414" stroke="#ffd166" stroke-width="1.5"/>
+        <circle cx="${px+padW/2}" cy="${hY}" r="2" fill="#ffd166"/>
+        <line x1="${px+padW/2-2}" y1="${hY}" x2="${px+padW/2+2}" y2="${hY}" stroke="#0a0a0a" stroke-width="1.2"/>
+        <line x1="${px+padW/2}" y1="${hY-2}" x2="${px+padW/2}" y2="${hY+2}" stroke="#0a0a0a" stroke-width="1.2"/>
+        <circle cx="${px+padW/2}" cy="${lkY}" r="4" fill="#0a0a0a" stroke="#c8c8ff" stroke-width="2"/>
+        <circle cx="${px+padW/2}" cy="${lkY}" r="1.5" fill="#c8c8ff"/>`;
+    if(gLbl){
+      if(side==='L'){h+=`
+        <line x1="${px}" y1="${fT+fH/2}" x2="${px-16}" y2="${fT+fH/2}" stroke="#ff6b2b" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${fT+fH/2+4}" text-anchor="end" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono">FINGER</text>
+        <line x1="${px+padW/2-9}" y1="${hY}" x2="${px-16}" y2="${hY+12}" stroke="#ffd166" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${hY+16}" text-anchor="end" fill="#ffd166" font-size="8" font-family="IBM Plex Mono">HINGE</text>
+        <line x1="${px+padW/2-5}" y1="${lkY}" x2="${px-16}" y2="${lkY-8}" stroke="#c8c8ff" stroke-width=".8" opacity=".7"/>
+        <text x="${px-18}" y="${lkY-4}" text-anchor="end" fill="#c8c8ff" font-size="8" font-family="IBM Plex Mono">LINK</text>`;}
+    }
+    return h;
+  }
+
+  const sl=gOpen?`~200mm OPEN`:`~32mm CLOSED`;
+  const x1=gOpen?lx:lx+padW, x2=gOpen?rx+padW:rx;
+  const h18x=cx+Math.sin(hR)*18, h18y=shCY-Math.cos(hR)*18;
+  svg.innerHTML=`
+    <line x1="${x1}" y1="${fT-24}" x2="${x2}" y2="${fT-24}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <line x1="${x1}" y1="${fT-28}" x2="${x1}" y2="${fT-20}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <line x1="${x2}" y1="${fT-28}" x2="${x2}" y2="${fT-20}" stroke="#ff6b2b" stroke-width=".9" opacity=".8"/>
+    <text x="${cx}" y="${fT-28}" text-anchor="middle" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono" font-weight="700">${sl}</text>
+    ${rod(lHX,lkY)} ${rod(rHX,lkY)}
+    ${pad(lx,'L')} ${pad(rx,'R')}
+    <rect x="${cx-28}" y="${sY}" width="56" height="${sH}" rx="6" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="2"/>
+    <circle cx="${cx}" cy="${shCY}" r="10" fill="#0f0f0f" stroke="#333" stroke-width="2"/>
+    <circle cx="${cx}" cy="${shCY}" r="3" fill="#222" stroke="#444" stroke-width="1"/>
+    <line x1="${cx}" y1="${shCY}" x2="${hTX}" y2="${hTY}" stroke="#ff6b2b" stroke-width="5" stroke-linecap="round" opacity=".25"/>
+    <line x1="${cx}" y1="${shCY}" x2="${hTX}" y2="${hTY}" stroke="#ff6b2b" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${h18x}" cy="${h18y}" r="3.5" fill="#0d0d0d" stroke="#ff6b2b" stroke-width="1.5"/>
+    <circle cx="${h18x}" cy="${h18y}" r="1.2" fill="#ff6b2b"/>
+    <circle cx="${hTX}" cy="${hTY}" r="4.5" fill="#ff6b2b"/>
+    ${gLbl?`<line x1="${hTX+5}" y1="${hTY}" x2="${hTX+22}" y2="${hTY-8}" stroke="#ff6b2b" stroke-width=".8" opacity=".7"/>
+    <text x="${hTX+24}" y="${hTY-4}" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono">HORN</text>
+    <text x="${cx}" y="${(hTY+lkY)/2+4}" text-anchor="middle" fill="#c8c8ff" font-size="8" font-family="IBM Plex Mono" opacity=".8">LINKAGE ROD</text>`:''}
+    <path d="M${cx-4},${sY+sH} L${cx-4},${H-28}" fill="none" stroke="#e63946" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+    <path d="M${cx},${sY+sH} L${cx},${H-28}" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+    <path d="M${cx+4},${sY+sH} L${cx+4},${H-28}" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>`;
+}
+
+function setG(m) {
+  gOpen = m==='open';
+  document.getElementById('bOpen').classList.toggle('on', gOpen);
+  document.getElementById('bClosed').classList.toggle('on', !gOpen);
+  drawG();
+}
+function togL() {
+  gLbl = !gLbl;
+  const b = document.getElementById('bLbl');
+  b.classList.toggle('on', gLbl);
+  b.textContent = gLbl ? 'LABELS ON' : 'LABELS OFF';
+  drawG();
+}
+
+// ═══ ARM DIAGRAM ══════════════════════════════════════════════════════════
+let armMode = 'table';
+function drawA() {
+  const svg = document.getElementById('armSVG'); if(!svg) return;
+  const W=500,H=360,cx=W/2;
+  const td = armMode==='floor'?-52:armMode==='high'?28:3;
+  const tr = td*Math.PI/180;
+  const bX=90,bY=230,sW=44,sH=44,sX=bX+10,sY2=bY-sH;
+  const shX=sX+sW/2,shY=sY2,aL=180;
+  const eX=shX+Math.cos(-tr)*aL, eY=shY+Math.sin(-tr)*aL;
+  const gX=eX+Math.cos(-tr)*24, gY=eY+Math.sin(-tr)*24;
+  const aT = td<0?`${Math.abs(td)}° DOWN`:td>0?`${td}° UP`:`HORIZONTAL`;
+
+  svg.innerHTML=`
+    <line x1="20" y1="${bY+20}" x2="440" y2="${bY+20}" stroke="#1a2235" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="430" y="${bY+33}" text-anchor="end" fill="#1a2235" font-size="8" font-family="IBM Plex Mono">FLOOR</text>
+    <rect x="20" y="${bY-16}" width="66" height="11" rx="3" fill="#111" stroke="#222" stroke-width="1.5"/>
+    <text x="53" y="${bY-6}" text-anchor="middle" fill="#333" font-size="7" font-family="IBM Plex Mono">ARMREST</text>
+    <rect x="${bX-3}" y="${bY-26}" width="15" height="32" rx="3" fill="#111" stroke="#cc8800" stroke-width="2"/>
+    <circle cx="${bX+4}" cy="${bY-12}" r="2.5" fill="#cc8800" opacity=".7"/>
+    <text x="${bX-17}" y="${bY-10}" text-anchor="end" fill="#cc8800" font-size="8" font-family="IBM Plex Mono">CLAMP</text>
+    <rect x="${sX}" y="${sY2}" width="${sW}" height="${sH}" rx="4" fill="#1a2a1a" stroke="#06d6a0" stroke-width="2"/>
+    <text x="${sX+sW/2}" y="${sY2+sH/2+4}" text-anchor="middle" fill="#06d6a0" font-size="7" font-family="IBM Plex Mono">NEMA17</text>
+    <text x="${sX+sW+20}" y="${sY2+sH/2+4}" fill="#06d6a0" font-size="8" font-family="IBM Plex Mono">AXIS 1 / 360° YAW</text>
+    <circle cx="${shX}" cy="${shY}" r="16" fill="#1a1a2a" stroke="#4488ff" stroke-width="2.5"/>
+    <circle cx="${shX}" cy="${shY}" r="8" fill="#0a0a1a" stroke="#4488ff" stroke-width="1.5"/>
+    <circle cx="${shX}" cy="${shY}" r="3" fill="#4488ff"/>
+    <text x="${shX-24}" y="${shY-18}" text-anchor="middle" fill="#4488ff" font-size="8" font-family="IBM Plex Mono">AXIS 2 PITCH</text>
+    <line x1="${shX}" y1="${shY}" x2="${eX}" y2="${eY}" stroke="#4488ff" stroke-width="13" stroke-linecap="round" opacity=".08"/>
+    <line x1="${shX}" y1="${shY}" x2="${eX}" y2="${eY}" stroke="#1e3050" stroke-width="10" stroke-linecap="round"/>
+    <line x1="${shX}" y1="${shY}" x2="${eX}" y2="${eY}" stroke="#4488ff" stroke-width="10" stroke-linecap="round" opacity=".14"/>
+    <text x="${(shX+eX)/2+Math.sin(tr)*14}" y="${(shY+eY)/2-Math.cos(tr)*14}" text-anchor="middle" fill="#4488ff" font-size="9" font-family="IBM Plex Mono" opacity=".7">760mm</text>
+    <circle cx="${eX}" cy="${eY}" r="12" fill="#1a1a0a" stroke="#ffd166" stroke-width="2"/>
+    <circle cx="${eX}" cy="${eY}" r="5" fill="#0a0a0a" stroke="#ffd166" stroke-width="1.5"/>
+    <circle cx="${eX}" cy="${eY}" r="2" fill="#ffd166"/>
+    <text x="${eX+16}" y="${eY-12}" fill="#ffd166" font-size="8" font-family="IBM Plex Mono">AXIS 3 / WRIST ROLL</text>
+    <g transform="rotate(${-td},${gX},${gY})">
+      <rect x="${gX-10}" y="${gY-9}" width="20" height="16" rx="4" fill="#2a1010" stroke="#ff6b2b" stroke-width="1.8"/>
+      <rect x="${gX-14}" y="${gY-17}" width="9" height="17" rx="3" fill="#2a1010" stroke="#ff6b2b" stroke-width="1.5"/>
+      <rect x="${gX+5}" y="${gY-17}" width="9" height="17" rx="3" fill="#2a1010" stroke="#ff6b2b" stroke-width="1.5"/>
+      <rect x="${gX-14}" y="${gY-19}" width="9" height="5" rx="3" fill="#06d6a0" opacity=".8"/>
+      <rect x="${gX+5}" y="${gY-19}" width="9" height="5" rx="3" fill="#06d6a0" opacity=".8"/>
+    </g>
+    <text x="${gX+24}" y="${gY+4}" fill="#ff6b2b" font-size="8" font-family="IBM Plex Mono">AXIS 4 / GRIPPER</text>
+    <line x1="${shX}" y1="${shY}" x2="${shX+52}" y2="${shY}" stroke="#1a2235" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="${shX+55}" y="${shY+(td<0?16:-8)}" fill="#445" font-size="8" font-family="IBM Plex Mono">${aT}</text>`;
+}
+
+function setArm(m) {
+  armMode = m;
+  ['af','at','ah'].forEach((id,i)=> document.getElementById(id)?.classList.toggle('on',['floor','table','high'][i]===m));
+  drawA();
+}
+
+// ═══ INIT ═════════════════════════════════════════════════════════════════
+drawG();
+drawA();
+</script>
+</body>
+</html>
